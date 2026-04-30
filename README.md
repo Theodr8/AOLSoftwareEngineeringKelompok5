@@ -1,3 +1,10 @@
+Kelompok 5
+Anggota
+Derrick Gunawan
+Johansen Tan
+Kevin Tan
+Rayyan
+Theodore Alexander
 # Godev
 
 A full-stack Single Page Application (SPA) built with React (Vite), Express, Typescript, and PostgreSQL.
