@@ -40,7 +40,7 @@ npm install
 ``` bash
 # Inside root dirrectory
 cd ..
-cd backend
+cd database
 docker-compose up -d
 ```
 
