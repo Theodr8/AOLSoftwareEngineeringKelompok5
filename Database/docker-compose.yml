@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Service Database Postgres
+  db:
+    image: postgres:15-alpine
+    container_name: GoDevSE
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: GoDev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Service pgAdmin (GUI untuk Database)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_GoDev
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
