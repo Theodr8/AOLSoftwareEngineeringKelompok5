@@ -40,6 +40,7 @@ npm install
 ``` bash
 # Inside root dirrectory
 cd ..
+cd database
 docker-compose up -d
 ```
 
