@@ -1,19 +1,30 @@
 import { Router } from 'express';
 import authRoutes from './authRoutes';
-// import userRoutes from './userRoutes';
-// import postRoutes from './postRoutes';
-
+import postRoutes from './postRoutes';
+import userRoutes from './userRoutes';
 const router = Router();
 
-// Semua rute Auth akan berawalan /api/auth
+// Semua rute akan berawalan /api
 
 router.get('/', (req, res) => {
-  res.json({ message: "Selamat datang di API Sistem Saya! 🚀" });
+  res.json({ message: "Selamat datang di API Sistem Saya!" });
 });
 
-router.use('/auth', authRoutes);
+// --- CONTOH RUTE YANG DILINDUNGI ---
+// Perhatikan kita meletakkan 'requireAuth' di tengah, sebelum fungsi Response (Controller)
+// router.get('/users/me', requireAuth, async (req: AuthRequest, res: Response) => {
+//   // Karena sudah lewat satpam, kita pasti punya req.user
+//   const userId = req.user.userId; 
 
-// router.use('/users', userRoutes);
-// router.use('/posts', postRoutes);
+//   res.json({
+//     message: "Selamat datang di area rahasia!",
+//     userIdAnda: userId
+//   });
+// });
+
+router.use('/auth', authRoutes);
+router.use('/posts', postRoutes);
+router.use('/users', userRoutes);
+
 
 export default router;

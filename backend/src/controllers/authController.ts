@@ -8,12 +8,11 @@ export const register = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, username, password, displayName } = req.body;
 
-    // 1. Validasi Input Dasar
     if (!email || !username || !password) {
       return res.status(400).json({ message: "Email, username, dan password wajib diisi!" });
     }
 
-    // 2. Cek apakah email atau username sudah terdaftar
+    // Cek email atau username sudah terdaftar
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ email }, { username }]
@@ -24,17 +23,15 @@ export const register = async (req: Request, res: Response): Promise<any> => {
       return res.status(400).json({ message: "Email atau Username sudah terdaftar!" });
     }
 
-    // 3. Enkripsi Password (Hashing)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 4. Simpan User Baru ke Database
     const newUser = await prisma.user.create({
       data: {
         email,
         username,
         passwordHash: hashedPassword,
-        displayName: displayName || username, // Default ke username jika displayName kosong
+        displayName: displayName || username, 
       }
     });
 
@@ -57,21 +54,18 @@ export const login = async (req: Request, res: Response): Promise<any> => {
       return res.status(400).json({ message: "Email dan password wajib diisi!" });
     }
 
-    // 1. Cari user berdasarkan email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(400).json({ message: "Email tidak ditemukan!" });
     }
 
-    // 2. Bandingkan password yang diinput dengan yang ada di database
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(400).json({ message: "Password salah!" });
     }
 
-    // 3. Buat Token (JWT)
+    // (JWT)
     const secret = process.env.JWT_SECRET || 'rahasia_negara_123';
-    // Token ini berisi ID user dan akan kedaluwarsa dalam 1 hari
     const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '1d' });
 
     res.json({ 
