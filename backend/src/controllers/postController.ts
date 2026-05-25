@@ -4,18 +4,19 @@ import prisma from '../lib/prisma';
 
 export const createPost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
-    const {content} = req.body;
+    const {body, title} = req.body;
     const userId = req.user.userId;
 
-    if (!content) {
+    if (!body) {
       return res.status(400).json({message: "Tidak boleh kosong"});
     }
     const newPost = await prisma.post.create({
       data: {
-        content,
+        title,
+        body,
         authorId: userId,
       },
-      include: {author : {select : {username : true, displayname: true}}}
+      include: {author : {select : {username : true, displayName: true}}}
     });
     res.status(201).json({message: "Postingan berhasil terkirim", post: newPost});
   }
@@ -71,3 +72,73 @@ export const getAllPosts = async (req: Request, res: Response): Promise<any> => 
     res.status(500).json({ message: "Gagal mengambil data postingan." });
   }
 };
+
+export const likePost = async (req: AuthRequest, res:Response): Promise <any> =>{
+  try{
+    const currentUserId = req.user.userId;
+    const {postId} = req.params;
+
+    await prisma.postLike.create({
+      data:{
+        userId: currentUserId,
+        postId,
+      }
+    });
+    res.json({message: "tes like"})
+  }
+  catch (error: any){
+    res.status(500).json({error: error.message})
+  }
+}
+
+export const unlikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
+  try{
+    const currentUserId = req.user.userId;
+    const {postId} = req.params;
+
+    await prisma.postLike.deleteMany({
+      where: {
+        userId: currentUserId,
+        postId: postId,
+      },
+      // data:{
+      //   userId: currentUserId,
+      //   postId,
+      // }
+    });
+    res.json({message: "tes unlike berhasil"})
+  }
+  catch (error: any){
+    res.status(500).json({error: error.message})
+  }
+}
+
+export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
+  try{
+    const currentUserId = req.user.userId;
+    const likePost = await prisma.postLike.findMany({
+      where : {
+        userId: currentUserId,
+      },
+      select : {
+        postId: true
+      }
+    });
+    const likepostId = likePost.map(f => f.postId);
+    
+    const posts = await prisma.post.findMany({
+      where : {
+        id: {in: likepostId}
+      },
+      orderBy: {createdAt: 'desc'},
+      include: {
+        author: {select : {id:true, username:true, displayName: true}}
+      }
+
+    });
+    res.json(posts);
+  } 
+  catch(error: any){
+    res.status(500).json({error: error.message})
+  } 
+}
