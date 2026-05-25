@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import { Jwt } from "jsonwebtoken";
 import { AuthRequest } from "../middleware/requireAuth";
 import prisma from '../lib/prisma';
+import { userInfo } from "node:os";
 
 export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Promise<any> =>{
     try{
@@ -22,5 +23,78 @@ export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Prom
     }
     catch (error:any){
         res.status(500).json({error : error.message})
+    }
+};
+
+export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any> => {
+    try{
+        const UserId = req.user.userId;
+        const ProfileDetail = await prisma.user.findUnique({
+            where :{
+                id: UserId
+            },
+            select: {
+                id:true,
+                username : true,
+                displayName : true,
+                email : true,
+                // passwords : true,
+                bio: true,
+                avatarUrl : true,
+                websiteUrl : true,
+                githubUrl : true,
+                linkedinUrl: false,
+                location : true,
+            }
+        });
+        res.json(ProfileDetail);
+    }
+    catch (error:any){
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<any> => {
+    try{
+        const UserId = req.user.userId;
+        const {displayName, username, bio, avatarUrl,email, websiteUrl, githubUrl, location,linkedinUrl} = req.body;
+
+        const updateUser = await prisma.user.update({
+            where :{
+                id : UserId
+            },
+            data: {
+                displayName,
+                username,
+                bio,
+                avatarUrl,
+                email,
+                websiteUrl,
+                githubUrl,
+                linkedinUrl,
+                location
+            },
+            select: {
+                id:true,
+                username : true,
+                displayName : true,
+                email : true,
+                // passwords : true,
+                bio: true,
+                avatarUrl : true,
+                websiteUrl : true,
+                githubUrl : true,
+                linkedinUrl: true,
+                location : true,
+            }
+        });
+        res.json({
+            message : "Profile berhasil diupdate",
+            user: updateUser
+        });
+    }
+    catch (error: any){
+        console.error("Update profile error: ", error);
+        res.status(500).json({message: "Gagal memperbarui profiel"});
     }
 };
