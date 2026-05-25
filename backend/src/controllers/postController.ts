@@ -142,3 +142,67 @@ export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any
     res.status(500).json({error: error.message})
   } 
 }
+export const savePost = async (req: AuthRequest, res:Response): Promise<any> =>{
+  try{
+    const currentUserId = req.user.userId;
+    const {postId} = req.params;
+
+    await prisma.postSave.create({
+      data: {
+        userId: currentUserId,
+        postId: postId,
+      },
+    });
+    res.json({message: "tes save berhasil"})
+  }
+  catch (error: any){
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const unsavePost = async (req: AuthRequest, res:Response): Promise<any> => {
+  try{
+    const currentUserId = req.user.userId;
+    const {postId} = req.params;
+
+    await prisma.postSave.deleteMany({
+      where: {
+        userId: currentUserId,
+        postId: postId,
+      },
+    });
+    res.json({message: "tes unsave berhasil"})
+  }
+  catch(error: any){
+    res.status(500).json({error:error.message});
+  }
+}
+
+export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any> => {
+  try{
+    const currentUserId = req.user.userId;
+    const savePost = await prisma.postSave.findMany({
+      where: {
+        userId : currentUserId
+      },
+      select : {
+        postId : true
+      },
+    });
+    const savePostId = savePost.map(f => f.postId);
+
+    const posts = await prisma.post.findMany({
+      where:{
+        id : {in: savePostId}
+      },
+      orderBy : {createdAt: 'desc'},
+      include: {
+        author: {select : {id:true, username:true, displayName: true}}
+      }
+    })
+    res.json(posts);
+  }
+  catch (error:any){
+    res.status(500).json({error:error.message});
+  }
+}
