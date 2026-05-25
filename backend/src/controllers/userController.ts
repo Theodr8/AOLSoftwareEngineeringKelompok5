@@ -98,3 +98,82 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
         res.status(500).json({message: "Gagal memperbarui profiel"});
     }
 };
+
+export const following = async (req: AuthRequest, res:Response): Promise<any> => {
+    try {
+        const UserId = req.user.userId;
+        const {targetUserId} = req.params;
+        if (UserId === targetUserId){
+            return res.status(400).json({message: "Tidak bisa follow diri sendiri"});
+        }
+        // const targetUser = await prisma.user.findUnique({
+        //     where: {id: targetUserId}
+        // })
+
+        // if (!targetUser){
+        //     return res.status(400).json({message: "User tidak ditemukan"});
+        // }
+
+        const alreadyFollow = await prisma.follow.findUnique({
+            where :  {
+                followerId_followingId: {
+                    followerId: UserId,
+                    followingId: targetUserId
+                }
+            }
+        })
+        if (alreadyFollow){
+            await prisma.follow.deleteMany({
+                where : {
+                    followerId: UserId,
+                    followingId: targetUserId
+                }
+            });
+            res.json({message: "Tes berhasil Unfollow"})
+        }
+        else {
+
+            await prisma.follow.create({
+                data: {
+                    followerId : UserId,
+                    followingId : targetUserId
+                }
+            });
+            
+            res.json({message : "Tes berhasil follow"});
+        }
+
+    }
+    catch (error: any){
+        res.status(500).json({error: error.message})
+    }
+}
+
+// export const unfollowing = async (req: AuthRequest, res:Response): Promise<any> => {
+//     try {
+//         const UserId = req.user.userId;
+//         const targetUserId = req.params.id;
+//         if (UserId === targetUserId){
+//             return res.status(400).json({message: "Tidak bisa follow diri sendiri"});
+//         }
+//         const targetUser = await prisma.user.findUnique({
+//             where: {id: targetUserId}
+//         })
+//         if (!targetUser){
+//             return res.status(400).json({message: "User tidak ditemukan"});
+//         }
+
+//         await prisma.follow.deleteMany({
+//             where: {
+//                 followerId : UserId,
+//                 followingId : targetUserId
+//             }
+//         });
+
+//         res.json({message : "Tes berhasil follow"});
+
+//     }
+//     catch (error: any){
+//         res.status(500).json({error: error.message})
+//     }
+// }
