@@ -78,40 +78,63 @@ export const likePost = async (req: AuthRequest, res:Response): Promise <any> =>
     const currentUserId = req.user.userId;
     const {postId} = req.params;
 
-    await prisma.postLike.create({
-      data:{
-        userId: currentUserId,
-        postId,
+    const alreadyLike = await prisma.postLike.findUnique({
+      where : {
+        userId_postId:{
+          userId: currentUserId,
+          postId: postId
+        }
       }
-    });
-    res.json({message: "tes like"})
+    })
+
+    if (alreadyLike) {
+      await prisma.postLike.deleteMany({
+        where:{
+          userId: currentUserId,
+          postId: postId
+        }
+      })
+      res.json({message: "tes unlike berhasil"})
+    }
+
+    else {
+
+      
+      await prisma.postLike.create({
+        data:{
+          userId: currentUserId,
+          postId,
+        }
+      });
+      res.json({message: "tes like berhasil"})
+    }
   }
   catch (error: any){
     res.status(500).json({error: error.message})
   }
 }
 
-export const unlikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
-  try{
-    const currentUserId = req.user.userId;
-    const {postId} = req.params;
+// export const unlikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
+//   try{
+//     const currentUserId = req.user.userId;
+//     const {postId} = req.params;
 
-    await prisma.postLike.deleteMany({
-      where: {
-        userId: currentUserId,
-        postId: postId,
-      },
-      // data:{
-      //   userId: currentUserId,
-      //   postId,
-      // }
-    });
-    res.json({message: "tes unlike berhasil"})
-  }
-  catch (error: any){
-    res.status(500).json({error: error.message})
-  }
-}
+//     await prisma.postLike.deleteMany({
+//       where: {
+//         userId: currentUserId,
+//         postId: postId,
+//       },
+//       // data:{
+//       //   userId: currentUserId,
+//       //   postId,
+//       // }
+//     });
+//     res.json({message: "tes unlike berhasil"})
+//   }
+//   catch (error: any){
+//     res.status(500).json({error: error.message})
+//   }
+// }
 
 export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
   try{
@@ -147,36 +170,58 @@ export const savePost = async (req: AuthRequest, res:Response): Promise<any> =>{
     const currentUserId = req.user.userId;
     const {postId} = req.params;
 
-    await prisma.postSave.create({
-      data: {
-        userId: currentUserId,
-        postId: postId,
-      },
+    const alreadySave = await prisma.postSave.findUnique({
+      where: {
+        userId_postId:{
+          userId: currentUserId,
+          postId: postId
+        }
+      }
     });
-    res.json({message: "tes save berhasil"})
+    //cek kalo udah disave
+    if (alreadySave) {
+      await prisma.postSave.deleteMany({
+        where:{
+          userId: currentUserId,
+          postId: postId
+        }
+      })
+     res.json({message: "Tes unsave berhasil"}) 
+    }
+
+    else {
+
+      await prisma.postSave.create({
+        data: {
+          userId: currentUserId,
+          postId: postId,
+        },
+      });
+      res.json({message: "tes save berhasil"})
+    }
   }
   catch (error: any){
     res.status(500).json({error: error.message});
   }
 }
 
-export const unsavePost = async (req: AuthRequest, res:Response): Promise<any> => {
-  try{
-    const currentUserId = req.user.userId;
-    const {postId} = req.params;
+// export const unsavePost = async (req: AuthRequest, res:Response): Promise<any> => {
+//   try{
+//     const currentUserId = req.user.userId;
+//     const {postId} = req.params;
 
-    await prisma.postSave.deleteMany({
-      where: {
-        userId: currentUserId,
-        postId: postId,
-      },
-    });
-    res.json({message: "tes unsave berhasil"})
-  }
-  catch(error: any){
-    res.status(500).json({error:error.message});
-  }
-}
+//     await prisma.postSave.deleteMany({
+//       where: {
+//         userId: currentUserId,
+//         postId: postId,
+//       },
+//     });
+//     res.json({message: "tes unsave berhasil"})
+//   }
+//   catch(error: any){
+//     res.status(500).json({error:error.message});
+//   }
+// }
 
 export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
