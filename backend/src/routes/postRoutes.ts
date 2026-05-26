@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, unlikePost, savePost, unsavePost, viewSavePost } from '../controllers/postController';
+import { viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
 import { requireAuth } from '../middleware/requireAuth';
 
 const router = Router();
