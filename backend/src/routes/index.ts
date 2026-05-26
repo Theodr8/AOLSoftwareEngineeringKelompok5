@@ -3,6 +3,7 @@ import authRoutes from './authRoutes';
 import postRoutes from './postRoutes';
 import userRoutes from './userRoutes';
 import jobRoutes from './jobRoutes';
+import messageRoutes from './messageRoutes';
 const router = Router();
 
 // Semua rute akan berawalan /api
@@ -27,6 +28,7 @@ router.use('/auth', authRoutes);
 router.use('/posts', postRoutes);
 router.use('/users', userRoutes);
 router.use('/jobs', jobRoutes);
+router.use('/chat', messageRoutes);
 
 
 export default router;
