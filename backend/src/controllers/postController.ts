@@ -28,23 +28,30 @@ export const createPost = async (req: AuthRequest, res:Response): Promise<any> =
 export const getFollowingPosts = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
     const currentUserId = req.user.userId;
-    const following = await prisma.follows.findMany({
+    const following = await prisma.follow.findMany({
       where : {followerId : currentUserId},
       select: {followingId: true},
     });
 
+    
     const followingId = following.map(f => f.followingId);
 
-    const posts = await prisma.post.findMany({
-      where : {
-        authorId: {in: followingId}
-      },
-      orderBy: {createdAt: 'desc'},
-      include: {
-        author: {select : {id:true, username:true, displayName: true}}
-      }
-    });
-    res.json(posts);
+    if (!followingId){
+      res.json({message: "belum follow siapapun"});
+    }
+    else {
+
+      const posts = await prisma.post.findMany({
+        where : {
+          authorId: {in: followingId}
+        },
+        orderBy: {createdAt: 'desc'},
+        include: {
+          author: {select : {id:true, username:true, displayName: true}}
+        }
+      });
+      res.json(posts);
+    }
   }
   catch (error: any){
     res.status(500).json({error: error.message});
