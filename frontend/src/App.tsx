@@ -1,39 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'; // Jangan lupa import React
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/login";
+import Register from "./pages/Register.tsx";
+import Dashboard from './pages/Dashboard.tsx';
 
-// types.ts or inside App.tsx
-interface BackendResponse {
-  message: string;
-  status: number;
-}
-
-const App: React.FC = () => {
-  // Define the state type using our Interface
-  const [data, setData] = useState<BackendResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/message');
-        const result: BackendResponse = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
-
+function App() {
   return (
-    <div>
-      <h1>Backend Message: {data?.message}</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* Supaya kalau buka localhost:3000 langsung dilempar ke login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
