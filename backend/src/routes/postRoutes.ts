@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
+import { createComment,viewCommentPost,viewDetailedPost,viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
 import { requireAuth } from '../middleware/requireAuth';
 
 const router = Router();
@@ -17,5 +17,9 @@ router.get('/savepost',requireAuth, viewSavePost);
 
 router.get('/foryou',requireAuth, getAllPosts);
 router.get('/following',requireAuth, getFollowingPosts);
+
+router.get('/:postId',requireAuth, viewDetailedPost);
+router.get('/:postId/comment',requireAuth, viewCommentPost);
+router.post('/:postId/postcomment',requireAuth, createComment);
 
 export default router;

@@ -257,4 +257,130 @@ export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any>
   catch (error:any){
     res.status(500).json({error:error.message});
   }
+
+}
+
+export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<any> =>{
+  try{
+
+    const currentUserId = req.user.userId;
+    const postsId = req.params.postId;
+    
+    const posts = await prisma.post.findUnique({
+      where: {
+        id : postsId
+      },
+      include: {
+        author: {
+          select:{
+            avatarUrl: true,
+            id: true,
+            username: true,
+            displayName: true,
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+          }
+        },
+      },
+      
+    });
+    if(!posts){
+      return res.status(400).json({message: "couldn't find post"});
+    }
+
+    const [liked, saved] = await Promise.all([
+      prisma.postLike.findUnique({
+        where: {userId_postId: {userId: currentUserId, postId: postsId}}
+
+      }),
+      prisma.postSave.findUnique({
+        where: {userId_postId: {userId: currentUserId, postId: postsId}}
+      })
+    ])
+    const formattedPost = {
+      ...posts,
+      isLikedByMe: !!liked,
+      isSavedByMe: !!saved,
+    };
+    // delete (formattedPost as any).likes;
+    // delete (formattedPost as any).saves;
+    res.json(formattedPost);
+  }
+  catch (error: any){
+    res.status(500).json({error: error.message}); 
+  }
+
+}
+
+export const viewCommentPost = async (req:AuthRequest, res:Response): Promise<any> => {
+  try{
+    const currentUserId = req.user.userId;
+    const postsId = req.params.postId;
+
+    const comments = await prisma.PostComment.findMany({
+      where:{
+        postId: postsId,
+      },
+      include: {
+        author: {
+          select:{
+
+            id:true,
+            username:true,
+            displayName:true,
+          }
+        },
+        // comments: {
+        //   id: true, 
+        //   author: true,
+        //   body: true,
+        // }
+      },
+      orderBy:{
+        createdAt:'asc',
+      }
+    });
+    res.json(comments);
+  }
+  catch(error: any){
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const createComment = async (req:AuthRequest, res:Response): Promise<any> => {
+  try{
+    const postsId = req.params.postId;
+    const currentUserId =req.user.userId;
+    const {body} = req.body;
+
+    if(!body) {
+      return res.status(400).json({message: "Tidak boleh kosong"});
+    }
+
+    const comments = await prisma.PostComment.create({
+     
+      data: {
+        body,
+        postId: postsId,
+        authorId: currentUserId
+      },
+      include:{
+        author:{
+          select:{
+            username:true,
+            displayName:true,
+          }
+        }
+      }
+
+    })
+    res.status(500).json({message:"berhasil dikirim"});
+  }
+  catch(error: any){
+    res.status(500).json({error: error.message});
+  }
 }
