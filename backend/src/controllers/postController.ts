@@ -2,6 +2,33 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/requireAuth';
 import prisma from '../lib/prisma';
 
+export const viewUserAllPost = async (req: AuthRequest, res:Response): Promise<any> => {
+  try{
+    // const myUserId = req.user.userId;
+    const currentUserId = req.params.userId;
+
+    const viewPost = await prisma.post.findMany({
+      where: {
+        authorId: currentUserId
+      },
+      include: {
+        author:{
+          select:{
+
+            id:true,
+            displayName: true,
+            username: true,
+          }
+        }
+      }
+    })
+    res.json(viewPost);
+  }
+  catch (error: any){
+    res.status(500).json({error: error.message});
+  }
+}
+
 export const createPost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
     const {body, title} = req.body;
@@ -283,6 +310,7 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
           select: {
             likes: true,
             saves: true,
+            comments: true,
           }
         },
       },
@@ -292,19 +320,24 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
       return res.status(400).json({message: "couldn't find post"});
     }
 
-    const [liked, saved] = await Promise.all([
+    const [liked, saved,commented] = await Promise.all([
       prisma.postLike.findUnique({
         where: {userId_postId: {userId: currentUserId, postId: postsId}}
 
       }),
       prisma.postSave.findUnique({
         where: {userId_postId: {userId: currentUserId, postId: postsId}}
+      }),
+      prisma.PostComment.findFirst({
+        where: {authorId: currentUserId, postId: postsId}
       })
     ])
+    
     const formattedPost = {
       ...posts,
       isLikedByMe: !!liked,
       isSavedByMe: !!saved,
+      isCommentedByMe: !!commented,
     };
     // delete (formattedPost as any).likes;
     // delete (formattedPost as any).saves;
@@ -379,6 +412,38 @@ export const createComment = async (req:AuthRequest, res:Response): Promise<any>
 
     })
     res.status(500).json({message:"berhasil dikirim"});
+  }
+  catch(error: any){
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const deletePost = async (req:AuthRequest, res:Response): Promise<any> => {
+  try{
+    const postsId = req.params.postId;
+    const currentUserId = req.user.userId;
+
+    const posts = await prisma.post.findUnique({
+      where:{
+        id: postsId
+      },
+      select:{
+        authorId: true
+      }
+    });
+
+    if (posts.authorId != currentUserId){
+      return res.status(403).json({message: "Tidak punya akses untuk menghapus"});
+    }
+
+    await prisma.post.delete({
+      where:{
+        id: postsId,
+        // authorId: currentUserId
+      },
+      
+    });
+    res.json({message: "tes delete post berhasil"});
   }
   catch(error: any){
     res.status(500).json({error: error.message});

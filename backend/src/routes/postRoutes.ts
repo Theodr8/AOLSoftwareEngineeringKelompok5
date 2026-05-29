@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { createComment,viewCommentPost,viewDetailedPost,viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
+import { viewUserAllPost,deletePost,createComment,viewCommentPost,viewDetailedPost,viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
 import { requireAuth } from '../middleware/requireAuth';
 
 const router = Router();
 
+
+router.get('/:userId', requireAuth, viewUserAllPost);
 // Route ini akan menangani method GET
 // Karena nanti dihubungkan ke '/api/posts', maka '/' di sini artinya adalah '/api/posts'
 router.post('/',requireAuth, createPost);
@@ -21,5 +23,7 @@ router.get('/following',requireAuth, getFollowingPosts);
 router.get('/:postId',requireAuth, viewDetailedPost);
 router.get('/:postId/comment',requireAuth, viewCommentPost);
 router.post('/:postId/postcomment',requireAuth, createComment);
+
+router.post('/:postId/delete',requireAuth,deletePost );
 
 export default router;
