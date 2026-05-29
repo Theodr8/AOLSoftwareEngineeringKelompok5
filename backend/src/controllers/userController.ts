@@ -2,7 +2,6 @@ import { Request,Response } from "express";
 import { Jwt } from "jsonwebtoken";
 import { AuthRequest } from "../middleware/requireAuth";
 import prisma from '../lib/prisma';
-import { userInfo } from "node:os";
 import fs from 'fs';
 import path from 'path';
 

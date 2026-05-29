@@ -5,6 +5,7 @@ import userRoutes from './userRoutes';
 import jobRoutes from './jobRoutes';
 import messageRoutes from './messageRoutes';
 import projectRoutes from './projectRoutes';
+import searchRoute from './searchRoute';
 const router = Router();
 
 // Semua rute akan berawalan /api
@@ -31,6 +32,7 @@ router.use('/users', userRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/chat', messageRoutes);
 router.use('/projects', projectRoutes);
+router.use('/search', searchRoute);
 
 
 export default router;
