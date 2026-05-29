@@ -3,6 +3,8 @@ import { Jwt } from "jsonwebtoken";
 import { AuthRequest } from "../middleware/requireAuth";
 import prisma from '../lib/prisma';
 import { userInfo } from "node:os";
+import fs from 'fs';
+import path from 'path';
 
 export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Promise<any> =>{
     try{
@@ -29,6 +31,7 @@ export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Prom
 export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any> => {
     try{
         const UserId = req.user.userId;
+
         const ProfileDetail = await prisma.user.findUnique({
             where :{
                 id: UserId
@@ -57,8 +60,9 @@ export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any>
 export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<any> => {
     try{
         const UserId = req.user.userId;
-        const {displayName, username, bio, avatarUrl,email, websiteUrl, githubUrl, location,linkedinUrl} = req.body;
+        let {displayName, username, bio, avatarUrl,email, websiteUrl, githubUrl, location,linkedinUrl} = req.body;
 
+        
         const updateUser = await prisma.user.update({
             where :{
                 id : UserId
@@ -79,7 +83,7 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
                 username : true,
                 displayName : true,
                 email : true,
-                passwords : true,
+                passwordHash : false,
                 bio: true,
                 avatarUrl : true,
                 websiteUrl : true,
@@ -88,14 +92,25 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
                 location : true,
             }
         });
+        // if (!updateUser){
+        //     return res.status(404).json({error: Error});
+        // }
+        if (req.file){
+            avatarUrl = `/uploads/${req.file.filename}`;
+        }
         res.json({
             message : "Profile berhasil diupdate",
             user: updateUser
         });
     }
     catch (error: any){
-        console.error("Update profile error: ", error);
-        res.status(500).json({message: "Gagal memperbarui profiel"});
+        if (req.file){
+            fs.unlink(path.join('public/uploads', req.file.filename), (err) => {
+                if (err) console.error('Failed to update profile');
+            });
+        }
+        // console.error("Update profile error: ", error);
+        res.status(500).json({error: error.message});
     }
 };
 

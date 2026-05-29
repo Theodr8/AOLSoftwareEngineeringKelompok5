@@ -1,13 +1,15 @@
 import { Router } from 'express';
 import { viewFollowerList,viewFollowingList,GetRecommendedUsers, UpdateProfile, ViewProfile, following } from '../controllers/userController';
 import { requireAuth } from '../middleware/requireAuth';
+import { upload } from '../middleware/uploadMiddleware';
+
 
 const router = Router();
 
 router.get('/suggestions', requireAuth, GetRecommendedUsers);
 
 router.get('/',requireAuth, ViewProfile);
-router.patch('/update',requireAuth, UpdateProfile);
+router.patch('/update',requireAuth, upload.single('avatarUrl'),UpdateProfile);
 
 
 router.get('/followinglist',requireAuth, viewFollowingList)
