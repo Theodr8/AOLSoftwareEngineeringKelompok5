@@ -33,19 +33,19 @@ export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any>
             where :{
                 id: UserId
             },
-            select: {
-                id:true,
-                username : true,
-                displayName : true,
-                email : true,
-                // passwords : true,
-                bio: true,
-                avatarUrl : true,
-                websiteUrl : true,
-                githubUrl : true,
-                linkedinUrl: false,
-                location : true,
-            }
+            // select: {
+            //     id:true,
+            //     username : true,
+            //     displayName : true,
+            //     email : true,
+            //     // passwords : true,
+            //     bio: true,
+            //     avatarUrl : true,
+            //     websiteUrl : true,
+            //     githubUrl : true,
+            //     linkedinUrl: true,
+            //     location : true,
+            // }
         });
         res.json(ProfileDetail);
     }
@@ -79,7 +79,7 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
                 username : true,
                 displayName : true,
                 email : true,
-                // passwords : true,
+                passwords : true,
                 bio: true,
                 avatarUrl : true,
                 websiteUrl : true,
@@ -146,6 +146,77 @@ export const following = async (req: AuthRequest, res:Response): Promise<any> =>
     }
     catch (error: any){
         res.status(500).json({error: error.message})
+    }
+}
+
+export const viewFollowingList = async (req: AuthRequest, res:Response): Promise<any> => {
+    try{
+        const currentUserId = req.user.userId;
+        const followinglist = await prisma.Follow.findMany({
+            where :{
+                followerId: currentUserId,
+            },
+            
+            select:{
+                // _count:{
+                    // select:{
+
+                        following:{
+                            select:{
+                                id:true,
+                                username: true,
+                                displayName:true,
+                            }
+                        },
+                    // }
+                        
+                // },
+            }
+
+        })
+        const followingCount = await prisma.follow.count({
+            where:{
+                followerId:currentUserId
+            }
+        })
+        res.json({following: followinglist, count:followingCount});
+    }
+    catch (error:any){
+        res.status(500).json({error:error.message});
+    }
+}
+export const viewFollowerList = async (req: AuthRequest, res:Response): Promise<any> => {
+    try{
+        const currentUserId = req.user.userId;
+        const followerlist = await prisma.Follow.findMany({
+            where :{
+                followingId: currentUserId,
+            },
+            
+            select:{
+                follower:{
+                    select:{
+                        id:true,
+                        username: true,
+                        displayName:true,
+                    }
+                },
+                // users:{
+                    
+                //     username: true,
+                //     displayName: true,
+                // }
+            }
+        });
+        const followerCount = await prisma.Follow.count({
+            where:{
+                followingId:currentUserId
+            }
+        });
+        res.json({followerlist, followerCount});
+    }
+    catch (error:any){
+        res.status(500).json({error:error.message});
     }
 }
 
