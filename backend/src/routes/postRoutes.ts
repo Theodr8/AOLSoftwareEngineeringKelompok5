@@ -1,29 +1,29 @@
 import { Router } from 'express';
-import { viewUserAllPost,deletePost,createComment,viewCommentPost,viewDetailedPost,viewLikePost,getAllPosts, getFollowingPosts, createPost, likePost, savePost, viewSavePost } from '../controllers/postController';
+import { 
+viewUserAllPost, deletePost, createComment, viewCommentPost, 
+viewDetailedPost, viewLikePost, getAllPosts, getFollowingPosts, 
+createPost, likePost, savePost, viewSavePost 
+} from '../controllers/postController';
 import { requireAuth } from '../middleware/requireAuth';
 
 const router = Router();
 
-
-router.get('/:userId', requireAuth, viewUserAllPost);
-// Route ini akan menangani method GET
-// Karena nanti dihubungkan ke '/api/posts', maka '/' di sini artinya adalah '/api/posts'
-router.post('/',requireAuth, createPost);
-router.post('/:postId/like',requireAuth, likePost);
-// router.post('/:postId/unlike',requireAuth, unlikePost);
+// static route
+router.get('/foryou', requireAuth, getAllPosts);
+router.get('/following', requireAuth, getFollowingPosts);
 router.get('/likedpost', requireAuth, viewLikePost);
+router.get('/savepost', requireAuth, viewSavePost);
+router.post('/', requireAuth, createPost); 
 
-router.post('/:postId/save',requireAuth, savePost );
-// router.post('/:postId/unsave',requireAuth, unsavePost);
-router.get('/savepost',requireAuth, viewSavePost);
+// dinamyc route
+router.get('/user/:userId', requireAuth, viewUserAllPost); 
 
-router.get('/foryou',requireAuth, getAllPosts);
-router.get('/following',requireAuth, getFollowingPosts);
+router.get('/:postId', requireAuth, viewDetailedPost);
 
-router.get('/:postId',requireAuth, viewDetailedPost);
-router.get('/:postId/comment',requireAuth, viewCommentPost);
-router.post('/:postId/postcomment',requireAuth, createComment);
-
-router.post('/:postId/delete',requireAuth,deletePost );
+router.post('/:postId/like', requireAuth, likePost);
+router.post('/:postId/save', requireAuth, savePost);
+router.get('/:postId/comment', requireAuth, viewCommentPost);
+router.post('/:postId/postcomment', requireAuth, createComment);
+router.post('/:postId/delete', requireAuth, deletePost);
 
 export default router;
