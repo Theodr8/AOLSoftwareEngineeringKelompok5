@@ -4,25 +4,22 @@ import { requireAuth } from "../middleware/requireAuth";
 
 const router = Router();
 
-router.get('/:userId', requireAuth, viewUserAllProjects);
-// Route ini akan menangani method GET
-// Karena nanti dihubungkan ke '/api/posts', maka '/' di sini artinya adalah '/api/posts'
-router.post('/',requireAuth, createProject);
-router.post('/:projectId/like',requireAuth, likeProject);
-// router.post('/:projectId/unlike',requireAuth, unlikePost);
-router.get('/likedproject', requireAuth, viewLikeProjects);
-
-router.post('/:projectId/save',requireAuth, saveProject );
-// router.post('/:projectId/unsave',requireAuth, unsaveProject);
-router.get('/saveproject',requireAuth, viewSaveProjects);
-
+// static route
 router.get('/foryou',requireAuth, viewProject);
 router.get('/following',requireAuth, getFollowingProjects);
+router.get('/likedproject', requireAuth, viewLikeProjects);
+router.get('/saveproject',requireAuth, viewSaveProjects);
+router.post('/',requireAuth, createProject);
+
+// dynamic route
+router.get('/user/:userId', requireAuth, viewUserAllProjects);
 
 router.get('/:projectId',requireAuth, viewDetailedProject);
+
+router.post('/:projectId/like',requireAuth, likeProject);
+router.post('/:projectId/save',requireAuth, saveProject );
 router.get('/:projectId/comment',requireAuth, viewCommentProject);
 router.post('/:projectId/postcomment',requireAuth, createComment);
-
 router.post('/:projectId/delete',requireAuth,deleteProject);
 
 export default router;
