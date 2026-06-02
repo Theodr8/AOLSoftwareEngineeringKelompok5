@@ -2,7 +2,7 @@ Kelompok 5
 Anggota 
 * Derrick Gunawan
 * Johansen Tan
-* Kevin Tan
+* Kevin Tan - 2702232265
 * Rayyan
 * Theodore Alexander
 # Godev
