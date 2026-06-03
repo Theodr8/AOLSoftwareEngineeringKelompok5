@@ -14,7 +14,6 @@ export const viewUserAllPost = async (req: AuthRequest, res:Response): Promise<a
       include: {
         author:{
           select:{
-
             id:true,
             displayName: true,
             username: true,
@@ -85,13 +84,12 @@ export const getFollowingPosts = async (req: AuthRequest, res: Response): Promis
   }
 };
 
-export const getAllPosts = async (req: Request, res: Response): Promise<any> => {
+export const getAllPosts = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
-    // Mengambil semua postingan dari database
-    // include: digunakan untuk melakukan "Join" agar nama pembuatnya (User) ikut terbawa
+
     const posts = await prisma.post.findMany({
       include: {
-        author: { // Asumsi di skema kamu relasinya bernama 'author' atau 'user'
+        author: { 
           select: { username: true, displayName: true } 
         }
       },

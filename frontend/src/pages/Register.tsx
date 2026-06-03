@@ -30,8 +30,8 @@ const Register = () =>{
                 throw new Error(data.message || 'registration failed');
             }
 
-            alert('Registration success');
-            navigate('/dashboard');
+            alert('Registration success, please login');
+            navigate('/login');
 
 
         } catch(error: any){
@@ -39,7 +39,7 @@ const Register = () =>{
         }
     }
     return (
-                <div style={{ maxWidth: '400px', margin: '50px auto' }}>
+        <div style={{ maxWidth: '400px', margin: '50px auto' }}>
 
         <h2>Register</h2>
         
@@ -49,7 +49,7 @@ const Register = () =>{
             <label>Username</label>
             <input type="text" value = {username} onChange={(e) => setUsername(e.target.value)} required></input>
             <label>Display Name</label>
-            <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required></input>
+            <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)}></input>
             <label>Email</label>
             <input type="email" value = {email} onChange={(e) => setEmail(e.target.value)} required></input>
             <label>Password</label>

@@ -1,6 +1,8 @@
-import React, {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SuggestedDevelopers from "../component/SuggestedDevelopers";
+import Navbar from "../component/Navbar";
+import CreatePost from "../component/CreatePost";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -8,77 +10,97 @@ const Dashboard = () => {
 
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    // const [body, setBody] = useState('');
 
-    useEffect(() => {
+    const fetchPosts = async () => {
         const token = localStorage.getItem("token");
         if (!token) {
             navigate("/login");
             return;
         }
 
-        const fetchPosts = async () => {
-            setLoading(true);
-            setPosts([]);
-            try {
-                const endpoint = activeTab === "foryou" ? 
-                "http://localhost:5000/api/posts/foryou" : "http://localhost:5000/api/posts/following";
-                
-                const response = await fetch(endpoint, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
+        setLoading(true);
+        setPosts([]);
+        try {
+            const endpoint = activeTab === "foryou"
+                ? "http://localhost:5000/api/posts/foryou"
+                : "http://localhost:5000/api/posts/following";
 
-                if (!response.ok){
-                    throw new Error("Failed getting data");
+            const response = await fetch(endpoint, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 }
+            });
 
-                const data = await response.json();
-                // if (Array.isArray(data)){
-                //     setPosts(data);
-                // }
-                // else if (data.data && Array.isArray(data)) {
-                //     setPosts(data.data);
-                // }
-                // else {
-                //     setPosts([]);
-                // }
-                setPosts(data);
-                console.log(data);
+            if (!response.ok) {
+                throw new Error("Failed getting data");
             }
-            catch(error){
-                console.error("ada error", error);
-            }
-            finally {
-                setLoading(false);
-            }
-        };
+
+            const data = await response.json();
+            setPosts(data);
+        }
+        catch (error) {
+            console.error("ada error", error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+    // const handleCreatePost = async (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+
+    //     const token = localStorage.getItem("token");
+    //     if (!token) {
+    //         navigate("/login");
+    //         return;
+    //     }
+
+    //     if (!body.trim()) {
+    //         return;
+    //     }
+
+    //     try {
+    //         const response = await fetch("http://localhost:5000/api/posts/", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Authorization": `Bearer ${token}`,
+    //                 "Content-Type": "application/json"
+    //             },
+    //             body: JSON.stringify({ body })
+    //         });
+
+    //         const data = await response.json();
+
+    //         if (!response.ok) {
+    //             throw new Error(data.message || "posts failed");
+    //         }
+
+    //         setBody("");
+    //         await fetchPosts();
+    //     }
+    //     catch (error) {
+    //         alert(error);
+    //         console.error("ada error: ", error);
+    //     }
+    // };
+
+    useEffect(() => {
         fetchPosts();
     }, [activeTab, navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
-    };
+    
+
+    // const handleLogout = () => {
+    //     localStorage.removeItem("token");
+    //     navigate("/login");
+    // };
     return (
-    // Container utama dengan display Flex untuk membuat 3 kolom sejajar
     <div style={{ display: "flex", maxWidth: "1200px", margin: "0 auto", height: "100vh" }}>
-      
-      {/* ================= KOLOM KIRI: MENU NAVIGASI ================= */}
-        <div style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
-        <h2>GoDev</h2>
-        <ul style={{ listStyle: "none", padding: 0, lineHeight: "2.5" }}>
-            <li style={{ fontWeight: "bold" }}>🏠 Home</li>
-            <li>🔍 Explore</li>
-            <li>💼 Projects</li>
-            <li>💬 Chat</li>
-            <li>👤 Profile</li>
-        </ul>
-        <button onClick={handleLogout} style={{ marginTop: "50px", padding: "10px", width: "100%", cursor: "pointer" }}>
-            Logout
-        </button>
+        <div>
+            <Navbar />
         </div>
 
       {/* ================= KOLOM TENGAH: FEED POSTINGAN ================= */}
@@ -104,12 +126,14 @@ const Dashboard = () => {
         </div>
         </div>
 
-        <div style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
-        <input type="text" placeholder="What's compiling?" style={{ width: "100%", border: "none", outline: "none", fontSize: "16px" }} />
+        {/* <form onSubmit={handleCreatePost} style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
+        <input type="text" placeholder="What's compiling?" value={body} onChange={(e) => setBody(e.target.value)} required
+        style={{ width: "100%", border: "none", outline: "none", fontSize: "16px" }} />
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-                <button style={{ background: "black", color: "white", padding: "8px 16px", borderRadius: "20px", border: "none" }}>Post</button>
+                <button type="submit" style={{ background: "black", color: "white", padding: "8px 16px", borderRadius: "20px", border: "none" }}>Post</button>
             </div>
-        </div>
+        </form> */}
+        <CreatePost />
 
 
         {loading ? (<p style={{textAlign: "center"}}>Loading...</p>) : posts.length ===0 ? 
@@ -128,7 +152,6 @@ const Dashboard = () => {
         <div style={{ width: "300px", borderLeft: "1px solid #ccc", padding: "20px" }}>
         <div style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
             <SuggestedDevelopers/>
-            {/* // </SuggestedDevelopers>     */}
         </div>
         </div>
 

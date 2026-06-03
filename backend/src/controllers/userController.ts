@@ -61,6 +61,11 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
         const UserId = req.user.userId;
         let {displayName, username, bio, avatarUrl,email, websiteUrl, githubUrl, location,linkedinUrl} = req.body;
 
+        if (req.file) {
+            avatarUrl = `/uploads/${req.file.filename}`;
+            console.log("Data File:", req.file);
+        }
+
         
         const updateUser = await prisma.user.update({
             where :{
@@ -94,9 +99,6 @@ export const UpdateProfile = async (req: AuthRequest, res: Response): Promise<an
         // if (!updateUser){
         //     return res.status(404).json({error: Error});
         // }
-        if (req.file){
-            avatarUrl = `/uploads/${req.file.filename}`;
-        }
         res.json({
             message : "Profile berhasil diupdate",
             user: updateUser
@@ -262,3 +264,21 @@ export const viewFollowerList = async (req: AuthRequest, res:Response): Promise<
 //         res.status(500).json({error: error.message})
 //     }
 // }
+
+export const viewSkill = async (req: AuthRequest, res:Response): Promise<any> =>{
+    try{
+        // const currentUserId = req.user.userId;
+        // const skillId = req.body;
+
+        const skillUser = await prisma.skill.findMany({
+            select:{
+                id:true,
+                name:true,
+            }
+        })
+        res.json(skillUser);
+    }
+    catch (error:any){
+        res.status(500).json({error: error.message});
+    }
+}
