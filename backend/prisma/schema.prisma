@@ -58,6 +58,8 @@ model User {
   projectSaves      ProjectSave[]
   postReports       PostReport[]
   projectReports    ProjectReport[]
+  jobSaves          JobSave
+  jobApplications   JobApplication[]
   skills            UserSkill[]
   jobs              Job[]
   resetTokens       PasswordResetToken[]
@@ -129,6 +131,7 @@ model Post {
   author    User     @relation(fields: [authorId], references: [id], onDelete: Restrict)  // v7: Restrict, not SetNull — authorId is NOT NULL and Ghost User pattern prevents hard deletion
   title     String
   body      String
+  imageUrl  String?  @map("image_url")
   likeCount Int      @default(0)  @map("like_count")  // v3: Denormalized counter. v7: Maintained by single-statement $executeRaw atomic increment (not interactive $transaction). Enables O(1) ORDER BY for recommended feed.
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -165,6 +168,7 @@ model Project {
   author        User     @relation(fields: [authorId], references: [id], onDelete: SetNull)
   title         String
   description   String
+  imageUrl      String?  @map("image_url")
   repositoryUrl String?  @map("repository_url")
   liveUrl       String?  @map("live_url")
   likeCount     Int      @default(0)  @map("like_count")  // v3: Denormalized counter. v7: Same atomic $executeRaw pattern as Post.likeCount
@@ -397,9 +401,36 @@ model Job {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  applications  JobApplication[]
+  saves         JobSave[]
+
   @@index([posterId])
   @@index([status, createdAt(sort: Desc)])
   // v5: GIN index for array containment queries: WHERE skill_names @> ARRAY['React','Node']
   // Created via raw SQL migration in §1.4
   @@map("jobs")
+}
+
+model JobSave {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId String   @map("job_id")
+  job   Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, jobId])
+  @@map("job_saves")
+}
+
+model JobApplication {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId String   @map("job_id")
+  job   Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, projectId])
+  @@map("project_saves")
 }
