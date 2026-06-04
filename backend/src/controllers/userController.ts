@@ -18,6 +18,7 @@ export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Prom
                 id: true,
                 username: true,
                 displayName: true,
+                avatarUrl: true
             }
         });
         res.json(suggestion);
@@ -182,6 +183,7 @@ export const viewFollowingList = async (req: AuthRequest, res:Response): Promise
                                 id:true,
                                 username: true,
                                 displayName:true,
+                                avatarUrl: true
                             }
                         },
                     // }
@@ -215,6 +217,7 @@ export const viewFollowerList = async (req: AuthRequest, res:Response): Promise<
                         id:true,
                         username: true,
                         displayName:true,
+                        avatarUrl: true
                     }
                 },
                 // users:{
