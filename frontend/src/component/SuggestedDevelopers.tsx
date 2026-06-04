@@ -45,6 +45,13 @@ const SuggestedDevelopers = () => {
         developers.map((dev) => (
           <div key={dev.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
             <div>
+
+              <div style={{ fontWeight: "bold", fontSize: "14px" }}>                   
+                                <img 
+                                    src={dev.avatarUrl} 
+                                    alt="avatar" 
+                                    style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
+                                /></div>
               <div style={{ fontWeight: "bold", fontSize: "14px" }}>{dev.displayName}</div>
               <div style={{ color: "gray", fontSize: "12px" }}>@{dev.username}</div>
             </div>

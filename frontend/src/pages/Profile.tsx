@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
+import UserPost from "../component/UserPost";
 
 type ProfileType = {
     id?: string;
@@ -170,6 +171,12 @@ const Profile = () => {
             </div>
             </div>
         </div>
+        
+        <UserPost 
+            userId={profile.id || ""} 
+            displayName={profile.displayName || ""} 
+            avatarUrl={profile.avatarUrl || ""} 
+        />
 
         {successMessage && <p style={{ color: "green", textAlign: "center", marginBottom: 12 }}>{successMessage}</p>}
 
@@ -179,9 +186,7 @@ const Profile = () => {
               <div style={{ gridColumn: "1 / 3", display: "flex", gap: 12, alignItems: "center" }}>
                 <div style={{ width: 120, display: "flex", flexDirection: "column", gap: "10px" }}>
                     
-                    {/* GAMBAR PREVIEW */}
                     <img 
-                        // Jika ada preview baru, pakai itu. Jika tidak, pakai dari database. Jika kosong, pakai default.
                         src={
                             avatarPreview || 
                             (profile.avatarUrl ? `http://localhost:5000${profile.avatarUrl}` : "https://img.magnific.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg?semt=ais_hybrid&w=740&q=80")
@@ -190,10 +195,9 @@ const Profile = () => {
                         style={{ width: 120, height: 120, borderRadius: 8, objectFit: "cover", border: "1px solid #ccc" }} 
                     />
                     
-                    {/* INPUT FILE YANG BENAR */}
                     <input 
                         type="file" 
-                        accept="image/*" // Hanya izinkan pilih file gambar
+                        accept="image/*"
                         onChange={handleImageChange} 
                         style={{ width: "100%", fontSize: "12px" }} 
                     />

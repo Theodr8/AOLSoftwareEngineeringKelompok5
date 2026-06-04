@@ -58,7 +58,7 @@ model User {
   projectSaves      ProjectSave[]
   postReports       PostReport[]
   projectReports    ProjectReport[]
-  jobSaves          JobSave
+  jobSaves          JobSave[]
   jobApplications   JobApplication[]
   skills            UserSkill[]
   jobs              Job[]
@@ -431,6 +431,6 @@ model JobApplication {
   job   Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([userId, projectId])
-  @@map("project_saves")
+  @@unique([userId, jobId])
+  @@map("job_application")
 }

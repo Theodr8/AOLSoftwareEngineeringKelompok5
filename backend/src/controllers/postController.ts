@@ -17,6 +17,7 @@ export const viewUserAllPost = async (req: AuthRequest, res:Response): Promise<a
             id:true,
             displayName: true,
             username: true,
+            avatarUrl: true
           }
         }
       }
@@ -42,7 +43,7 @@ export const createPost = async (req: AuthRequest, res:Response): Promise<any> =
         body,
         authorId: userId,
       },
-      include: {author : {select : {username : true, displayName: true}}}
+      include: {author : {select : {username : true, displayName: true, avatarUrl: true}}}
     });
     res.status(201).json({message: "Postingan berhasil terkirim", post: newPost});
   }
@@ -73,7 +74,7 @@ export const getFollowingPosts = async (req: AuthRequest, res: Response): Promis
         },
         orderBy: {createdAt: 'desc'},
         include: {
-          author: {select : {id:true, username:true, displayName: true}}
+          author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
         }
       });
       res.json(posts);
@@ -90,7 +91,7 @@ export const getAllPosts = async (req: AuthRequest, res: Response): Promise<any>
     const posts = await prisma.post.findMany({
       include: {
         author: { 
-          select: { username: true, displayName: true } 
+          select: { username: true, displayName: true, avatarUrl: true } 
         }
       },
       orderBy: {
@@ -187,7 +188,7 @@ export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any
       },
       orderBy: {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true}}
+        author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
       }
 
     });
@@ -274,7 +275,7 @@ export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any>
       },
       orderBy : {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true}}
+        author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
       }
     })
     res.json(posts);

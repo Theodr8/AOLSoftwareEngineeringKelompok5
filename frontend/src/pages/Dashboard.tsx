@@ -139,6 +139,14 @@ const Dashboard = () => {
         {loading ? (<p style={{textAlign: "center"}}>Loading...</p>) : posts.length ===0 ? 
             (<p style={{textAlign: "center"}}>No post yet</p>) : (
                 posts.map((post) => <div key={post.id} style={{ borderBottom: "1px solid #eee", padding: "15px 0" }}>
+                    <div>
+
+                        <img 
+                            src={post.author.avatarUrl} 
+                            alt="avatar" 
+                            style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
+                            />
+                    </div>
                     <div style={{ fontWeight: "bold", marginBottom: "5px" }}>
                         {post.author?.displayName} <span style={{ color: "gray", fontWeight: "normal" }}> @{post.author?.username}</span>
                     </div>
