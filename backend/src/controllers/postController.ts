@@ -497,6 +497,8 @@ export const viewCommentPost = async (req:AuthRequest, res:Response): Promise<an
           select:{
 
             id:true,
+            avatarUrl:true,
+            
             username:true,
             displayName:true,
           }
@@ -538,14 +540,16 @@ export const createComment = async (req:AuthRequest, res:Response): Promise<any>
       include:{
         author:{
           select:{
+            id:true,
+            avatarUrl:true,
             username:true,
             displayName:true,
           }
         }
       }
 
-    })
-    res.status(500).json({message:"berhasil dikirim"});
+    });
+    res.status(201).json(comments);
   }
   catch(error: any){
     res.status(500).json({error: error.message});

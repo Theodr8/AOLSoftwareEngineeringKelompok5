@@ -165,7 +165,7 @@ const Dashboard = () => {
                     >
                         {post.author?.displayName} <span style={{ color: "gray", fontWeight: "normal" }}> @{post.author?.username}</span>
                     </div>
-                    <h1>{post.title}</h1>
+                    <h1 style={{cursor:"pointer"}} onClick={() => {navigate(`/post/${post.id}`)}}>{post.title}</h1>
                     <p>{post.content || post.body}</p>
 
                     <div style={{ display: "flex", gap: "16px", marginTop: "8px", color: "gray", fontSize: "13px" }}>

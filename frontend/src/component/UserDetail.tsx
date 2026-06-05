@@ -57,7 +57,7 @@ const UserDetail= () =>{
     if (!userProfile) return <p style={{ textAlign: "center", marginTop: "50px" }}>User tidak ditemukan.</p>;
     
     return(
-<div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
+        <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
             <Navbar />
             
             <div style={{marginLeft: "250px", flex: 1, padding: "20px", overflowY: "auto" }}>

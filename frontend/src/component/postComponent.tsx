@@ -67,29 +67,23 @@ const PostActions: React.FC<PostActionsProps> = ({
     return (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "15px", paddingTop: "10px", borderTop: "1px solid #eee" }}>
             
-            {/* SISI KIRI: LIKE, COMMENT, SHARE */}
             <div style={{ display: "flex", gap: "20px" }}>
                 
-                {/* TOMBOL LIKE */}
                 <button onClick={handleLike} style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", color: isLiked ? "red" : "black", fontSize: "14px" }}>
                     {isLiked ? "❤" : "♡"} <span style={{ color: "black" }}>{likesCount}</span>
                 </button>
 
-                {/* TOMBOL COMMENT */}
                 <button onClick={onCommentClick} style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", fontSize: "14px" }}>
                     Comment 💬
                 </button>
 
-                {/* TOMBOL SHARE */}
                 <button onClick={handleShare} style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", fontSize: "14px" }}>
                     Share
                 </button>
 
             </div>
 
-            {/* SISI KANAN: SAVE */}
             <div>
-                {/* TOMBOL SAVE */}
                 <button onClick={handleSave} style={{ background: "none", border: "none", cursor: "pointer", color: isSaved ? "blue" : "black", fontSize: "14px" }}>
                     {isSaved ? "Saved ⛉" : "Save"}
                 </button>

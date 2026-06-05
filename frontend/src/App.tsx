@@ -7,6 +7,7 @@ import Profile from './pages/Profile.tsx';
 import Chat from './pages/Chat.tsx';
 import Project from './pages/Project.tsx';
 import UserDetail from './component/UserDetail.tsx';
+import PostDetail from './pages/PostDetail.tsx';
 
 function App() {
   return (
@@ -24,9 +25,13 @@ function App() {
 
 
 
+
+
         {/* <Route path="/profile/" */}
         <Route path="/user/:userId" element= {<UserDetail />}/>
-        
+        <Route path="/post/:postId" element={<PostDetail />}/>
+
+
       </Routes>
     </BrowserRouter>
   );
