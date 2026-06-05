@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/requireAuth';
 import prisma from '../lib/prisma';
+import { create } from 'node:domain';
 
 export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
@@ -257,8 +258,10 @@ export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any
       },
       select : {
         postId: true
-      }
+      },
+
     });
+    
     const likepostId = likePost.map(f => f.postId);
     
     const posts = await prisma.post.findMany({
@@ -266,12 +269,41 @@ export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any
         id: {in: likepostId}
       },
       orderBy: {createdAt: 'desc'},
+      // include: {
+      //   author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
+      // }
       include: {
-        author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
-      }
+        author: { 
+          select: { id: true, username: true, displayName: true, avatarUrl: true } 
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+            comments: true,
+          }
+        },
+        likes: { where: { userId: currentUserId } },
+        saves: { where: { userId: currentUserId } },
+        comments: { where: { authorId: currentUserId }, take: 1 }
+      },
 
     });
-    res.json(posts);
+    const formattedPosts = posts.map((post) => ({
+      ...post,
+      likeCount: post._count.likes,
+      saveCount: post._count.saves,
+      commentCount: post._count.comments,
+      isLikedByMe: post.likes.length > 0,
+      isSavedByMe: post.saves.length > 0,
+      isCommentedByMe: post.comments.length > 0,
+      likes: undefined,
+      saves: undefined,
+      comments: undefined,
+      _count: undefined
+    }));
+
+    res.json(formattedPosts);
   } 
   catch(error: any){
     res.status(500).json({error: error.message})
@@ -354,10 +386,36 @@ export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any>
       },
       orderBy : {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
-      }
+        author: { 
+          select: { id: true, username: true, displayName: true, avatarUrl: true } 
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+            comments: true,
+          }
+        },
+        likes: { where: { userId: currentUserId } },
+        saves: { where: { userId: currentUserId } },
+        comments: { where: { authorId: currentUserId }, take: 1 }
+      },
     })
-    res.json(posts);
+    const formattedPosts = posts.map((post) => ({
+      ...post,
+      likeCount: post._count.likes,
+      saveCount: post._count.saves,
+      commentCount: post._count.comments,
+      isLikedByMe: post.likes.length > 0,
+      isSavedByMe: post.saves.length > 0,
+      isCommentedByMe: post.comments.length > 0,
+      likes: undefined,
+      saves: undefined,
+      comments: undefined,
+      _count: undefined
+    }));
+
+    res.json(formattedPosts);
   }
   catch (error:any){
     res.status(500).json({error:error.message});
