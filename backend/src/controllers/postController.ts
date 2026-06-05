@@ -2,32 +2,62 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/requireAuth';
 import prisma from '../lib/prisma';
 
-export const viewUserAllPost = async (req: AuthRequest, res:Response): Promise<any> => {
-  try{
-    // const myUserId = req.user.userId;
-    const currentUserId = req.params.userId;
+export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const myUserId = req.user.userId; 
+    const targetUserId = req.params.userId;
 
-    const viewPost = await prisma.post.findMany({
+    const viewPosts = await prisma.post.findMany({
       where: {
-        authorId: currentUserId
+        authorId: targetUserId 
       },
       include: {
-        author:{
-          select:{
-            id:true,
+        author: {
+          select: {
+            id: true,
             displayName: true,
             username: true,
             avatarUrl: true
           }
-        }
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+            comments: true,
+          }
+        },
+        // 3. MAGIC! Cek apakah "SAYA" ada di dalam daftar yang me-like/save/comment postingan ini
+        likes: { where: { userId: myUserId } },
+        saves: { where: { userId: myUserId } },
+        comments: { where: { authorId: myUserId }, take: 1 } // take: 1 agar tidak perlu menarik semua komentar, cukup cek 1 saja
       }
-    })
-    res.json(viewPost);
+    });
+
+    const formattedPosts = viewPosts.map((post) => ({
+      ...post,
+      likeCount: post._count.likes,
+      saveCount: post._count.saves,
+      commentCount: post._count.comments,
+      
+      // Jika array likes/saves/comments ada isinya (length > 0), berarti SAYA pernah melakukannya (true)
+      isLikedByMe: post.likes.length > 0,
+      isSavedByMe: post.saves.length > 0,
+      isCommentedByMe: post.comments.length > 0,
+
+      // Bersihkan properti bantuan Prisma agar response JSON terlihat bersih
+      likes: undefined,
+      saves: undefined,
+      comments: undefined,
+      _count: undefined
+    }));
+
+    res.json(formattedPosts);
+
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
-  catch (error: any){
-    res.status(500).json({error: error.message});
-  }
-}
+};
 
 export const createPost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
@@ -74,10 +104,34 @@ export const getFollowingPosts = async (req: AuthRequest, res: Response): Promis
         },
         orderBy: {createdAt: 'desc'},
         include: {
-          author: {select : {id:true, username:true, displayName: true, avatarUrl: true}}
+          author: {select : {id:true, username:true, displayName: true, avatarUrl: true}},
+          _count: {
+            select: {
+              likes: true,
+              saves: true,
+              comments: true,
+            }
+          },
+          likes: { where: { userId: currentUserId } },
+          saves: { where: { userId: currentUserId } },
+          comments: { where: { authorId: currentUserId }, take: 1 }
         }
       });
-      res.json(posts);
+      const formattedPosts = posts.map((post) => ({
+        ...post,
+        likeCount: post._count.likes,
+        saveCount: post._count.saves,
+        commentCount: post._count.comments,
+        isLikedByMe: post.likes.length > 0,
+        isSavedByMe: post.saves.length > 0,
+        isCommentedByMe: post.comments.length > 0,
+        likes: undefined,
+        saves: undefined,
+        comments: undefined,
+        _count: undefined
+      }));
+
+      res.json(formattedPosts);
     }
   }
   catch (error: any){
@@ -87,19 +141,44 @@ export const getFollowingPosts = async (req: AuthRequest, res: Response): Promis
 
 export const getAllPosts = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
+    const currentUserId = req.user.userId;
 
     const posts = await prisma.post.findMany({
       include: {
         author: { 
-          select: { username: true, displayName: true, avatarUrl: true } 
-        }
+          select: { id: true, username: true, displayName: true, avatarUrl: true } 
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+            comments: true,
+          }
+        },
+        likes: { where: { userId: currentUserId } },
+        saves: { where: { userId: currentUserId } },
+        comments: { where: { authorId: currentUserId }, take: 1 }
       },
       orderBy: {
         createdAt: 'desc' // Urutkan dari yang paling baru
       }
     });
 
-    res.json(posts);
+    const formattedPosts = posts.map((post) => ({
+      ...post,
+      likeCount: post._count.likes,
+      saveCount: post._count.saves,
+      commentCount: post._count.comments,
+      isLikedByMe: post.likes.length > 0,
+      isSavedByMe: post.saves.length > 0,
+      isCommentedByMe: post.comments.length > 0,
+      likes: undefined,
+      saves: undefined,
+      comments: undefined,
+      _count: undefined
+    }));
+
+    res.json(formattedPosts);
   } catch (error: any) {
     console.error("Get Posts Error:", error);
     res.status(500).json({ message: "Gagal mengambil data postingan." });
@@ -171,7 +250,7 @@ export const likePost = async (req: AuthRequest, res:Response): Promise <any> =>
 
 export const viewLikePost = async (req: AuthRequest, res:Response): Promise <any> =>{
   try{
-    const currentUserId = req.user.userId;
+    const currentUserId = req.params.userId;
     const likePost = await prisma.postLike.findMany({
       where : {
         userId: currentUserId,
@@ -258,7 +337,7 @@ export const savePost = async (req: AuthRequest, res:Response): Promise<any> =>{
 
 export const viewSavePost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
-    const currentUserId = req.user.userId;
+    const currentUserId = req.params.userId;
     const savePost = await prisma.postSave.findMany({
       where: {
         userId : currentUserId
@@ -338,8 +417,6 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
       isSavedByMe: !!saved,
       isCommentedByMe: !!commented,
     };
-    // delete (formattedPost as any).likes;
-    // delete (formattedPost as any).saves;
     res.json(formattedPost);
   }
   catch (error: any){

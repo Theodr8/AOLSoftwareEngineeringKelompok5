@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PostActions from "./postComponent";
 
 interface UserPostsProps {
     userId: string;
@@ -40,16 +41,16 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                 } 
                 else if (activeTab === "liked") {
                     if (activeDropdown === "posts") {
-                        endpoint = `http://localhost:5000/api/posts/likedpost`;
+                        endpoint = `http://localhost:5000/api/posts/likedpost/${userId}`;
                     } else if (activeDropdown === "projects") {
-                        endpoint = `http://localhost:5000/api/projects/likedproject`;
+                        endpoint = `http://localhost:5000/api/projects/likedproject/${userId}`;
                     }
                 } 
                 else if (activeTab === "saved") {
                     if (activeDropdown === "posts") {
-                        endpoint = `http://localhost:5000/api/posts/savepost`;
+                        endpoint = `http://localhost:5000/api/posts/savepost/${userId}`;
                     } else if (activeDropdown === "projects") {
-                        endpoint = `http://localhost:5000/api/projects/saveproject`;
+                        endpoint = `http://localhost:5000/api/projects/saveproject/${userId}`;
                     }
                 }
 
@@ -131,7 +132,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
 
                     return (
                         <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                            <div onClick={() => navigate(`/user/${item.author.id}`)} style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
                                 
                                 <img 
                                     src={postAvatarUrl} 
@@ -152,9 +153,18 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     </div>
                                 </div>
                             </div>
+                            <h1>{item.title}</h1>
                             <p style={{ fontSize: "15px", margin: 0 }}>
-                                {item.body || item.title || item.description} 
+                                {item.body  || item.description} 
                             </p>
+                                <PostActions 
+                                postId={item.id}
+                                initialLikes={item.likeCount || 0}
+                                // Sesuaikan properti isLiked / isSaved dari json backend-mu jika ada
+                                initialIsLiked={item.isLikedByMe || false} 
+                                initialIsSaved={item.isSavedByMe || false}
+                                onCommentClick={() => alert("Buka kolom komentar untuk post ini")} 
+                                />
                         </div>
                     );
                 })

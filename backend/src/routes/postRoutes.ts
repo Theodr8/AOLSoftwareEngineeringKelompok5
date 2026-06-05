@@ -11,11 +11,11 @@ const router = Router();
 // static route
 router.get('/foryou', requireAuth, getAllPosts);
 router.get('/following', requireAuth, getFollowingPosts);
-router.get('/likedpost', requireAuth, viewLikePost);
-router.get('/savepost', requireAuth, viewSavePost);
 router.post('/', requireAuth, createPost); 
 
 // dinamyc route
+router.get('/likedpost/:userId', requireAuth, viewLikePost);
+router.get('/savepost/:userId', requireAuth, viewSavePost);
 router.get('/user/:userId', requireAuth, viewUserAllPost); 
 
 router.get('/:postId', requireAuth, viewDetailedPost);

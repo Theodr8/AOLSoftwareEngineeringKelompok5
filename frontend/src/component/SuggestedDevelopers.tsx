@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 const SuggestedDevelopers = () => {
     const [developers, setDevelopers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSuggestions = async () => {
@@ -31,7 +33,7 @@ const SuggestedDevelopers = () => {
             }
         };
         fetchSuggestions();
-    }, []);
+    }, [navigate]);
     if (loading){
         return <p style={{ fontSize: "14px", color: "gray" }}>Mencari developer...</p>;
     }
@@ -44,7 +46,7 @@ const SuggestedDevelopers = () => {
       ) : (
         developers.map((dev) => (
           <div key={dev.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-            <div>
+            <div style={{cursor:"pointer"}} onClick={() => navigate(`/user/${dev.id}`)}>
 
               <div style={{ fontWeight: "bold", fontSize: "14px" }}>                   
                                 <img 

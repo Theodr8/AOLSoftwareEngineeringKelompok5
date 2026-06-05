@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SuggestedDevelopers from "../component/SuggestedDevelopers";
 import Navbar from "../component/Navbar";
 import CreatePost from "../component/CreatePost";
+import PostActions from "../component/postComponent";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -139,19 +140,50 @@ const Dashboard = () => {
         {loading ? (<p style={{textAlign: "center"}}>Loading...</p>) : posts.length ===0 ? 
             (<p style={{textAlign: "center"}}>No post yet</p>) : (
                 posts.map((post) => <div key={post.id} style={{ borderBottom: "1px solid #eee", padding: "15px 0" }}>
-                    <div>
+                    <div
+                        style={{ cursor: post.author?.id ? "pointer" : "default" }}
+                        onClick={() => {
+                            if (post.author?.id) {
+                                navigate(`/user/${post.author.id}`);
+                            }
+                        }}
+                    >
 
                         <img 
-                            src={post.author.avatarUrl} 
+                            src={post.author?.avatarUrl || "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg"} 
                             alt="avatar" 
                             style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
                             />
                     </div>
-                    <div style={{ fontWeight: "bold", marginBottom: "5px" }}>
+                    <div
+                        onClick={() => {
+                            if (post.author?.id) {
+                                navigate(`/user/${post.author.id}`);
+                            }
+                        }}
+                        style={{ cursor: post.author?.id ? "pointer" : "default", fontWeight: "bold", marginBottom: "5px" }}
+                    >
                         {post.author?.displayName} <span style={{ color: "gray", fontWeight: "normal" }}> @{post.author?.username}</span>
                     </div>
+                    <h1>{post.title}</h1>
                     <p>{post.content || post.body}</p>
+
+                    <div style={{ display: "flex", gap: "16px", marginTop: "8px", color: "gray", fontSize: "13px" }}>
+                        <span>{post.likeCount || 0} Likes</span>
+                        <span>{post.commentCount || 0} Comments</span>
+                        <span>{post.saveCount || 0} Saves</span>
                     </div>
+                    
+                    <PostActions 
+                        postId={post.id}
+                        initialLikes={post.likeCount || 0}
+                        // Sesuaikan properti isLiked / isSaved dari json backend-mu jika ada
+                        initialIsLiked={post.isLikedByMe || false} 
+                        initialIsSaved={post.isSavedByMe || false}
+                        onCommentClick={() => alert("Buka kolom komentar untuk post ini")} 
+                        />
+                        </div>
+
                     )
             )}
         </div>

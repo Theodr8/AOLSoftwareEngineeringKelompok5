@@ -72,7 +72,7 @@ export const likeProject = async (req: AuthRequest, res:Response): Promise <any>
 
 export const viewLikeProjects = async (req: AuthRequest, res:Response): Promise <any> =>{
   try{
-    const currentUserId = req.user.userId;
+    const currentUserId = req.params.userId;
     const likeProjects = await prisma.projectLike.findMany({
       where : {
         userId: currentUserId,
@@ -133,7 +133,7 @@ export const createProject = async(req: AuthRequest, res: Response): Promise<any
 
 export const saveProject = async (req: AuthRequest, res:Response): Promise<any> =>{
   try{
-    const currentUserId = req.user.userId;
+    const currentUserId = req.params.userId;
     const {projectId} = req.params;
 
     const alreadySave = await prisma.projectSave.findUnique({

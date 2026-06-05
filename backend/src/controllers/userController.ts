@@ -285,3 +285,31 @@ export const viewSkill = async (req: AuthRequest, res:Response): Promise<any> =>
         res.status(500).json({error: error.message});
     }
 }
+
+export const viewUser = async (req: AuthRequest, res:Response): Promise<any> =>{
+    try{
+        const userId = req.params.userId;
+
+        const userDetail = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            select:{
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+                bio: true,
+                location: true,
+                githubUrl: true,
+                linkedinUrl : true,
+                websiteUrl: true
+            }
+            
+        })
+        res.json({userDetail});
+    }
+    catch(error:any){
+        res.status(500).json({error: error.message});
+    }
+}

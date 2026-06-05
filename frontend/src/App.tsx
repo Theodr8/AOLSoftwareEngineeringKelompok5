@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.tsx';
 import Profile from './pages/Profile.tsx';
 import Chat from './pages/Chat.tsx';
 import Project from './pages/Project.tsx';
+import UserDetail from './component/UserDetail.tsx';
 
 function App() {
   return (
@@ -22,8 +23,9 @@ function App() {
         <Route path="/project" element= {<Project />} />
 
 
+
         {/* <Route path="/profile/" */}
-        
+        <Route path="/user/:userId" element= {<UserDetail />}/>
         
       </Routes>
     </BrowserRouter>

@@ -25,6 +25,10 @@ const containerStyle: React.CSSProperties = {
     boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
 };
 
+interface user {
+  userId: string;
+}
+
   const backendBaseUrl = "http://localhost:5000";
 
 const Profile = () => {
@@ -44,7 +48,7 @@ const Profile = () => {
         return;
       }
       try {
-        const res = await fetch("http://localhost:5000/api/users", {
+        const res = await fetch("http://localhost:5000/api/users/", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Gagal mengambil data pengguna");
