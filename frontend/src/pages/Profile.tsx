@@ -17,6 +17,7 @@ type ProfileType = {
 };
 
 const containerStyle: React.CSSProperties = {
+    // marginLeft: "350px",
     maxWidth: 900,
     margin: "24px auto",
     backgroundColor: "#fff",
@@ -128,7 +129,7 @@ const Profile = () => {
     <div style={{ backgroundColor: "#f4f6f8", minHeight: "100vh" }}>
       <Navbar />
 
-      <div style={containerStyle}>
+      <div style={{marginLeft: "250px",}}>
         <div style={{ height: 220, background: "linear-gradient(90deg,#eef2ff,#f8fafc)", position: "relative" }}>
           <div style={{ position: "absolute", right: 18, top: 18 }}>
             <button

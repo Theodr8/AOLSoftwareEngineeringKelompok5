@@ -60,7 +60,7 @@ const UserDetail= () =>{
 <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
             <Navbar />
             
-            <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
+            <div style={{marginLeft: "250px", flex: 1, padding: "20px", overflowY: "auto" }}>
                 <div style={{ maxWidth: "800px", margin: "0 auto", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
                     
                     {/* --- BAGIAN BANNER & INFO (Mirip dengan Profile.tsx tapi tanpa tombol Edit) --- */}

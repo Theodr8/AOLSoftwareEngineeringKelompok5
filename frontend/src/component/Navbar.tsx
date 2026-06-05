@@ -44,7 +44,8 @@ const Navbar = () => {
             height: "100vh", // Buat tinggi navbar full layar
             display: "flex", 
             flexDirection: "column", // Susun elemen dari atas ke bawah
-            boxSizing: "border-box" 
+            boxSizing: "border-box" ,
+            position: "fixed"
         }}>
             <h2>GoDev</h2>
             

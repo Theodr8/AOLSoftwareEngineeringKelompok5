@@ -99,13 +99,13 @@ const Dashboard = () => {
     //     navigate("/login");
     // };
     return (
-    <div style={{ display: "flex", maxWidth: "1200px", margin: "0 auto", height: "100vh" }}>
+    <div style={{ display: "flex",maxWidth: "1200px", margin: "0 auto", height: "100vh" }}>
         <div>
             <Navbar />
         </div>
 
       {/* ================= KOLOM TENGAH: FEED POSTINGAN ================= */}
-        <div style={{ flex: 1, padding: "0 20px" }}>
+        <div style={{ marginLeft: "250px",flex: 1, padding: "0 20px" }}>
         <div style={{ display: "flex", borderBottom: "1px solid #ccc", marginBottom: "20px" }}>
         <div 
             onClick={() => setActiveTab("foryou")}
