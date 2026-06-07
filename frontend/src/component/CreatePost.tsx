@@ -41,7 +41,11 @@ const CreatePost = () => {
     }
     return (
         <form onSubmit={handleCreatePost} style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
-        <input type = "text" value={title} onChange={(e) => setTitle('dummy')} />
+        <input type = "text" placeholder="Put your title" 
+        value={title} onChange={(e) => setTitle(e.target.value)} 
+        style={{ width: "30%", border: "none", outline: "none", fontSize: "16px" }}/>
+        
+        <hr style={{opacity:"40%"}}></hr>
         <input type="text" placeholder="What's compiling?" 
         value={body} onChange={(e) => setBody(e.target.value)} required
         style={{ width: "100%", border: "none", outline: "none", fontSize: "16px" }} />

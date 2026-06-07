@@ -187,7 +187,9 @@ const Profile = () => {
                   fontSize: "15px",
               }}>
 
-              <div onClick={() => navigate(``)}>
+              <div 
+              style={{cursor:"pointer"}}
+              onClick={() => navigate(`/followerlist/${profile.id}`)}>
                   <span style={{ fontWeight: "bold", color: "#000" }}>
                       {profile.followerCount || 0}
                   </span>
@@ -196,7 +198,9 @@ const Profile = () => {
                   </span>
               </div>
 
-              <div>
+              <div 
+              style={{cursor:"pointer"}}
+              onClick={() => navigate(`/followinglist/${profile.id}`)}>
                   <span style={{ fontWeight: "bold", color: "#000" }}>
                       {profile.followingCount || 0}
                   </span>
