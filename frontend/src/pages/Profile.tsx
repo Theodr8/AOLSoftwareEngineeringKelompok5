@@ -14,6 +14,8 @@ type ProfileType = {
     githubUrl?: string;
     phoneNumber?: string;
     location?: string;
+    followerCount?: number;
+    followingCount? : number;
 };
 
 const containerStyle: React.CSSProperties = {
@@ -55,6 +57,7 @@ const Profile = () => {
         if (!res.ok) throw new Error("Gagal mengambil data pengguna");
         const data = await res.json();
         setProfile(data);
+        console.log(data);
       } catch (err: any) {
         setErrorMessage(err.message || "Terjadi kesalahan");
       } finally {
@@ -62,6 +65,7 @@ const Profile = () => {
       }
     };
     fetchProfile();
+    
   }, [navigate]);
 
   const handleUpdate = async (e?: React.FormEvent) => {
@@ -174,7 +178,36 @@ const Profile = () => {
                 {profile.githubUrl && <a href={profile.githubUrl} style={{ color: "#111827" }}>{profile.githubUrl.replace("https://", "")}</a>}
                 {profile.websiteUrl && <a href={profile.websiteUrl} style={{ color: "#111827" }}>{profile.websiteUrl.replace("https://", "")}</a>}
             </div>
+
+            <div
+              style={{
+                  display: "flex",
+                  gap: "20px",
+                  marginTop: "20px",
+                  fontSize: "15px",
+              }}>
+
+              <div onClick={() => navigate(``)}>
+                  <span style={{ fontWeight: "bold", color: "#000" }}>
+                      {profile.followerCount || 0}
+                  </span>
+                  <span style={{ color: "#666", marginLeft: "4px" }}>
+                      Followers
+                  </span>
+              </div>
+
+              <div>
+                  <span style={{ fontWeight: "bold", color: "#000" }}>
+                      {profile.followingCount || 0}
+                  </span>
+                  <span style={{ color: "#666", marginLeft: "4px" }}>
+                      Following
+                  </span>
+              </div>
+          </div>
             </div>
+
+          
         </div>
         
         <UserPost 
@@ -243,6 +276,7 @@ const Profile = () => {
                 <label style={{ display: "block", fontWeight: 600 }}>GitHub</label>
                 <input value={profile.githubUrl || ""} onChange={(e) => setProfile({ ...profile, githubUrl: e.target.value })} style={{ width: "100%", padding: 8, marginTop: 6 }} />
               </div>
+
  
               <div style={{ gridColumn: "1 / 3", display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 6 }}>
                 <button type="button" onClick={() => setIsEditing(false)} style={{ padding: "10px 16px", borderRadius: 8, border: "1px solid #d1d5db", background: "#fff", cursor: "pointer" }}>

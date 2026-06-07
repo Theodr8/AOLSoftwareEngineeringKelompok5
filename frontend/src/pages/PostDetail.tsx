@@ -1,16 +1,74 @@
 import { useState,useEffect } from "react";
-import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PostComment from "../component/PostComment";
 import Navbar from "../component/Navbar";
+import PostActions from "../component/postComponent";
+
 
 const PostDetail = () => {
     const {postId} = useParams();
     const navigate = useNavigate();
     const [loading,setLoading] = useState(true);
     const [post, setPost] = useState<any>(null);
+    const [myId, setMyId] = useState<string | null>(localStorage.getItem("id"));
 
-    
+    useEffect(() => {
+        const resolveMyId = async () => {
+            if (myId) {
+                return;
+            }
+
+            const storedToken = localStorage.getItem("token");
+            if (!storedToken) {
+                return;
+            }
+
+            try {
+                const payloadPart = storedToken.split(".")[1];
+                if (payloadPart) {
+                    const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+                    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+                    const decoded = JSON.parse(atob(padded));
+                    if (decoded?.userId) {
+                        const resolvedId = String(decoded.userId);
+                        localStorage.setItem("id", resolvedId);
+                        setMyId(resolvedId);
+                        return;
+                    }
+                }
+            }
+            catch (error) {
+                console.error("gagal membaca token", error);
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/api/users", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${storedToken}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const profile = await response.json();
+                if (profile?.id) {
+                    const resolvedId = String(profile.id);
+                    localStorage.setItem("id", resolvedId);
+                    setMyId(resolvedId);
+                }
+            }
+            catch (error) {
+                console.error("gagal mengambil id profile", error);
+            }
+        };
+
+        resolveMyId();
+    }, [myId]);
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -51,11 +109,9 @@ const PostDetail = () => {
 <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
             <Navbar />
 
-            {/* AREA KONTEN UTAMA */}
             <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
                 <div style={{ maxWidth: "700px", margin: "0 auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", padding: "30px" }}>
                     
-                    {/* TOMBOL KEMBALI */}
                     <button 
                         onClick={() => navigate(-1)} // navigate(-1) berarti kembali ke halaman sebelumnya
                         style={{ display: "flex", alignItems: "center", background: "none", border: "none", color: "gray", cursor: "pointer", fontSize: "14px", marginBottom: "20px", padding: 0 }}
@@ -63,10 +119,17 @@ const PostDetail = () => {
                         ← Kembali
                     </button>
 
-                    {/* HEADER POSTINGAN (Info Author) */}
-                    <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+                    <div onClick={() => {
+                            if (post.author?.id && post.author.id !== myId) {
+                                navigate(`/user/${post.author.id}`);
+                            }
+                            else {
+                                navigate(`/profile`)
+                            }
+                        }
+                    }                 
+                    style={{ cursor:"pointer", display: "flex", alignItems: "center", marginBottom: "20px" }}>
                         <img 
-                            // Pastikan backend mengirimkan data author saat fetch detail post!
                             src={post.author?.avatarUrl ? `http://localhost:5000${post.author.avatarUrl}` : "https://via.placeholder.com/50"} 
                             alt="avatar" 
                             style={{ width: "50px", height: "50px", borderRadius: "50%", marginRight: "15px", objectFit: "cover" }} 
@@ -81,7 +144,6 @@ const PostDetail = () => {
                         </div>
                     </div>
 
-                    {/* ISI POSTINGAN */}
                     <div style={{ marginBottom: "20px" }}>
                         {post.title && (
                             <h2 style={{ marginTop: 0, marginBottom: "10px", fontSize: "22px" }}>{post.title}</h2>
@@ -91,13 +153,19 @@ const PostDetail = () => {
                         </p>
                     </div>
 
-                    {/* TANGGAL POSTINGAN */}
                     <div style={{ color: "gray", fontSize: "13px", paddingBottom: "15px", borderBottom: "1px solid #eee", marginBottom: "20px" }}>
-                        Diposting pada {new Date(post.createdAt).toLocaleString()}
+                        {new Date(post.createdAt).toLocaleString()}
                     </div>
 
-                    {/* KOMPONEN KOMENTAR */}
-                    {/* Karena postId mungkin undefined di useParams, kita pastikan dia berupa string */}
+                    <PostActions 
+                    postId={post.id}
+                    initialLikes={post._count.likes || 0}
+                    commentCount={post._count.comments || 0}
+                    initialIsLiked={post.isLikedByMe || false} 
+                    initialIsSaved={post.isSavedByMe || false}
+                    onCommentClick={() => navigate(`/post/${post.id}`)} 
+                    />
+
                     {postId && (
                         <PostComment postId={postId} />
                     )}

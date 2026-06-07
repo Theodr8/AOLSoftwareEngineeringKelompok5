@@ -80,7 +80,6 @@ const PostComment: React.FC<PostCommentProps> = ({postId}) => {
                 ) : (
                     comments.map((comment) => (
                         <div key={comment.id} style={{ display: "flex", gap: "10px" }}>
-                            {/* Pastikan backend-mu mengirimkan relasi 'author' untuk komentar ya! */}
                             <img 
                                 src={comment.author?.avatarUrl ? `http://localhost:5000${comment.author.avatarUrl}` : "https://via.placeholder.com/30"} 
                                 alt="avatar" 
@@ -97,7 +96,6 @@ const PostComment: React.FC<PostCommentProps> = ({postId}) => {
                 )}
             </div>
 
-            {/* KOTAK INPUT KOMENTAR */}
             <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px" }}>
                 <input 
                     type="text" 

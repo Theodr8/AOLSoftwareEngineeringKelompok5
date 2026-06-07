@@ -8,14 +8,46 @@ import PostActions from "../component/postComponent";
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const myId = localStorage.getItem("id");
+    // const [myId, setMyId] = useState<string | null>(localStorage.getItem("id"));
     const [activeTab, setActiveTab] = useState('foryou');
 
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem("token");
     // const [body, setBody] = useState('');
 
+    // useEffect(() => {
+    //     if (myId) {
+    //         return;
+    //     }
+
+    //     const storedToken = localStorage.getItem("token");
+    //     if (!storedToken) {
+    //         return;
+    //     }
+
+    //     try {
+    //         const payloadPart = storedToken.split(".")[1];
+    //         if (!payloadPart) {
+    //             return;
+    //         }
+
+    //         const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+    //         const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    //         const decoded = JSON.parse(atob(padded));
+    //         if (decoded?.userId) {
+    //             const resolvedId = String(decoded.userId);
+    //             localStorage.setItem("id", resolvedId);
+    //             setMyId(resolvedId);
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error("gagal membaca token", error);
+    //     }
+    // }, [myId]);
+
     const fetchPosts = async () => {
-        const token = localStorage.getItem("token");
         if (!token) {
             navigate("/login");
             return;
@@ -99,8 +131,11 @@ const Dashboard = () => {
                 posts.map((post) => <div key={post.id} style={{ borderBottom: "1px solid #eee", padding: "15px 0" }}>
             <div
                 onClick={() => {
-                    if (post.author?.id) {
+                    if (post.author?.id && post.author.id !== myId) {
                         navigate(`/user/${post.author.id}`);
+                    }
+                    else {
+                        navigate(`/profile`)
                     }
                 }}
                 style={{

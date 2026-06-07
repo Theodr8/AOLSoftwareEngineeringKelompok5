@@ -28,7 +28,6 @@ export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<
             comments: true,
           }
         },
-        // 3. MAGIC! Cek apakah "SAYA" ada di dalam daftar yang me-like/save/comment postingan ini
         likes: { where: { userId: myUserId } },
         saves: { where: { userId: myUserId } },
         comments: { where: { authorId: myUserId }, take: 1 } // take: 1 agar tidak perlu menarik semua komentar, cukup cek 1 saja
@@ -46,7 +45,6 @@ export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<
       isSavedByMe: post.saves.length > 0,
       isCommentedByMe: post.comments.length > 0,
 
-      // Bersihkan properti bantuan Prisma agar response JSON terlihat bersih
       likes: undefined,
       saves: undefined,
       comments: undefined,

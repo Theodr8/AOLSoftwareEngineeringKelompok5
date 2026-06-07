@@ -4,27 +4,43 @@ import { AuthRequest } from "../middleware/requireAuth";
 import prisma from '../lib/prisma';
 import fs from 'fs';
 import path from 'path';
+import { viewUserAllProjects } from "./projectController";
 
-export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Promise<any> =>{
-    try{
+export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Promise<any> => {
+    try {
         const currentUserId = req.user.userId;
 
-        const suggestion= await prisma.user.findMany({
-            where :{
-                id : { not:currentUserId}
+        const suggestion = await prisma.user.findMany({
+            where: {
+                // 1. Jangan tampilkan diri sendiri
+                id: { not: currentUserId },
+                
+                // 2. MAGIC: Jangan tampilkan user yang SUDAH di-follow oleh saya
+                followers: {
+                    none: {
+                        followerId: currentUserId
+                    }
+                }
             },
             take: 3,
             select: {
                 id: true,
                 username: true,
                 displayName: true,
-                avatarUrl: true
+                avatarUrl: true,
             }
         });
-        res.json(suggestion);
-    }
-    catch (error:any){
-        res.status(500).json({error : error.message})
+
+        // 3. Tambahkan status isFollowedByMe: false secara manual 
+        // (Karena kita sudah memfilter di atas, otomatis semua yang muncul di sini PASTI belum di-follow)
+        const formattedSuggestions = suggestion.map(user => ({
+            ...user,
+            isFollowedByMe: false 
+        }));
+
+        res.json(formattedSuggestions);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -32,24 +48,38 @@ export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any>
     try{
         const UserId = req.user.userId;
 
-        const ProfileDetail = await prisma.user.findUnique({
+        const data = await prisma.user.findUnique({
             where :{
                 id: UserId
             },
-            // select: {
-            //     id:true,
-            //     username : true,
-            //     displayName : true,
-            //     email : true,
-            //     // passwords : true,
-            //     bio: true,
-            //     avatarUrl : true,
-            //     websiteUrl : true,
-            //     githubUrl : true,
-            //     linkedinUrl: true,
-            //     location : true,
-            // }
+            select: {
+                id:true,
+                username : true,
+                displayName : true,
+                email : true,
+                // passwords : true,
+                bio: true,
+                avatarUrl : true,
+                websiteUrl : true,
+                githubUrl : true,
+                linkedinUrl: true,
+                location : true,
+                _count : {
+                    select: {
+                        followers:true,
+                        following: true
+                    }
+                },
+            }
         });
+        const ProfileDetail = {
+            ...data,
+            followerCount : data._count.followers,
+            followingCount : data._count.following,
+
+            followers: undefined,
+            _count : undefined
+        }
         res.json(ProfileDetail);
     }
     catch (error:any){
@@ -289,6 +319,7 @@ export const viewSkill = async (req: AuthRequest, res:Response): Promise<any> =>
 export const viewUser = async (req: AuthRequest, res:Response): Promise<any> =>{
     try{
         const userId = req.params.userId;
+        const myUserId = req.user.userId;
 
         const userDetail = await prisma.user.findUnique({
             where: {
@@ -303,11 +334,41 @@ export const viewUser = async (req: AuthRequest, res:Response): Promise<any> =>{
                 location: true,
                 githubUrl: true,
                 linkedinUrl : true,
-                websiteUrl: true
-            }
+                websiteUrl: true,
+
+                _count : {
+                    select: {
+                        followers:true,
+                        following: true
+                    }
+                },
+            },
+            // include: {
+            // }
             
         })
-        res.json({userDetail});
+        if (!userDetail) return res.status(404).json({ message: "User tidak ditemukan" });
+
+        const alreadyFollow = await prisma.follow.findUnique({
+            where :  {
+                followerId_followingId: {
+                    followerId: myUserId,
+                    followingId: userId
+                }
+            }
+        })
+
+        const formattedProfile = {
+            ...userDetail,
+            followerCount : userDetail._count.followers,
+            followingCount : userDetail._count.following,
+
+            isFollowedByMe: alreadyFollow !== null,
+
+            followers: undefined,
+            _count : undefined
+        }
+        res.json({formattedProfile});
     }
     catch(error:any){
         res.status(500).json({error: error.message});

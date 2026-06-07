@@ -18,6 +18,8 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
     const [projects, setProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const myId = localStorage.getItem("id");
+
     useEffect(() => {
         const fetchPost = async () => {
             const token = localStorage.getItem("token");
@@ -132,7 +134,17 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
 
                     return (
                         <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
-                            <div onClick={() => navigate(`/user/${item.author.id}`)} style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                            <div 
+                                onClick={() => {
+                                    if (item.author?.id && item.author.id !== myId) {
+                                        navigate(`/user/${item.author.id}`);
+                                    }
+                                    else {
+                                        navigate(`/profile`)
+                                    }
+                                }}
+                                style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                                    
                                 
                                 <img 
                                     src={postAvatarUrl} 

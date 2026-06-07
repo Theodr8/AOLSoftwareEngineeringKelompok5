@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import Follow from "./Follow";
 
 const SuggestedDevelopers = () => {
     const [developers, setDevelopers] = useState<any[]>([]);
@@ -50,7 +51,7 @@ const SuggestedDevelopers = () => {
 
               <div style={{ fontWeight: "bold", fontSize: "14px" }}>                   
                                 <img 
-                                    src={dev.avatarUrl} 
+                                    src={`http://localhost:5000${dev.avatarUrl}` ? `http://localhost:5000${dev.avatarUrl}` : dev.avatarUrl} 
                                     alt="avatar" 
                                     style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
                                 /></div>
@@ -58,9 +59,16 @@ const SuggestedDevelopers = () => {
               <div style={{ color: "gray", fontSize: "12px" }}>@{dev.username}</div>
             </div>
             {/* Tombol follow sementara hanya visual */}
-            <button style={{ padding: "5px 10px", background: "blue", color: "white", border: "none", borderRadius: "15px", cursor: "pointer", fontSize: "12px" }}>
+            {/* <button style={{ padding: "5px 10px", background: "blue", color: "white", border: "none", borderRadius: "15px", cursor: "pointer", fontSize: "12px" }}>
               Follow
-            </button>
+            </button> */}
+            <Follow 
+              userId= {dev.id}
+              initialFollower = {0}
+              initialFollowing= {0}
+              initialIsFollowed = {dev.isFollowedByMe || false}
+            />
+
           </div>
         ))
       )}

@@ -1,8 +1,7 @@
 import { useEffect,useState } from "react";
-import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
-import Profile from "../pages/Profile";
+import Follow from "./Follow";
 import UserPost from "../component/UserPost";
 
 // interface UserProps{
@@ -37,9 +36,9 @@ const UserDetail= () =>{
                     throw new Error("Failed to fetch user");
                 }
                 const data = await response.json();
-                const userData = data?.userDetail ?? data;
-                setUserProfile(userData);
-                console.log("Fetched user profile:", userData);
+                const formattedProfile = data?.formattedProfile ?? data;
+                setUserProfile(formattedProfile);
+                console.log("Fetched user profile:", formattedProfile);
                 }
                 catch(error){
                     console.error(error);
@@ -65,7 +64,7 @@ const UserDetail= () =>{
                     
                     {/* --- BAGIAN BANNER & INFO (Mirip dengan Profile.tsx tapi tanpa tombol Edit) --- */}
                     <div style={{ height: "200px", backgroundColor: "#e2e2e2", position: "relative" }}>
-                        {/* Jika ada fitur Follow, kamu bisa taruh tombol "Follow" di kanan atas ini nantinya */}
+
                     </div>
 
                     <div style={{ padding: "0 30px 30px 30px", position: "relative" }}>
@@ -76,16 +75,56 @@ const UserDetail= () =>{
                                 style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} 
                             />
                         </div>
+                        <div style={{flex:1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 
                         <div style={{ marginTop: "10px" }}>
                             <h1 style={{ margin: "0", fontSize: "28px" }}>{userProfile.displayName}</h1>
                             <p style={{ margin: "5px 0 0 0", color: "#666", fontSize: "15px" }}>@{userProfile.username}</p>
+
+                        </div>
+                        <div>
+
+                        <Follow 
+                        userId= {userProfile.id}
+                        initialFollower = {0}
+                        initialFollowing= {0}
+                        initialIsFollowed = {userProfile.isFollowedByMe ?? userProfile.isFollowedByme ?? false}
+                        />
+                        </div>
                         </div>
 
                         <p style={{ marginTop: "20px", fontSize: "15px", lineHeight: "1.5", color: "#333" }}>
                             {userProfile.bio || "Tidak ada bio."}
                         </p>
+
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: "20px",
+                                marginTop: "20px",
+                                fontSize: "15px",
+                            }}>
+
+                            <div>
+                                <span style={{ fontWeight: "bold", color: "#000" }}>
+                                    {userProfile.followerCount || 0}
+                                </span>
+                                <span style={{ color: "#666", marginLeft: "4px" }}>
+                                    Followers
+                                </span>
+                            </div>
+
+                            <div>
+                                <span style={{ fontWeight: "bold", color: "#000" }}>
+                                    {userProfile.followingCount || 0}
+                                </span>
+                                <span style={{ color: "#666", marginLeft: "4px" }}>
+                                    Following
+                                </span>
+                            </div>
+                        </div>
                     </div>
+
 
                     {/* --- BAGIAN POSTINGAN (Daur Ulang Komponen) --- */}
                     {/* Karena kita butuh userId-nya berformat string sesuai props, dan TypeScript kadang membaca useParams bisa undefined, kita pastikan userId ada */}
