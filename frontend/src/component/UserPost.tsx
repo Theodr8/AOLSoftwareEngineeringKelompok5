@@ -139,7 +139,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     alt="avatar" 
                                     style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
                                 />
-                                <div>
+                                <div style={{flex:1}}>
                                     <div style={{ fontWeight: "bold", fontSize: "14px" }}>
                                         {postAuthorName}
                                     </div>
@@ -153,17 +153,21 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     </div>
                                 </div>
                             </div>
+                            <div style={{cursor:"pointer"}} onClick={() => navigate(`/post/${item.id}`)} >
+
                             <h1>{item.title}</h1>
-                            <p style={{ fontSize: "15px", margin: 0 }}>
+                            <p
+                            style={{ fontSize: "15px", margin: 0 }}>
                                 {item.body  || item.description} 
                             </p>
+                            </div>
                                 <PostActions 
                                 postId={item.id}
                                 initialLikes={item.likeCount || 0}
-                                // Sesuaikan properti isLiked / isSaved dari json backend-mu jika ada
+                                commentCount={item.commentCount || 0}
                                 initialIsLiked={item.isLikedByMe || false} 
                                 initialIsSaved={item.isSavedByMe || false}
-                                onCommentClick={() => alert("Buka kolom komentar untuk post ini")} 
+                                onCommentClick={() => navigate(`/post/${item.id}`)} 
                                 />
                         </div>
                     );

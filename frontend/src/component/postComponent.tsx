@@ -4,14 +4,16 @@ import React from "react";
 interface PostActionsProps {
     postId: string;
     initialLikes: number;
+    commentCount: number;
     initialIsLiked: boolean;
     initialIsSaved: boolean;
-    onCommentClick: () => void; // Fungsi untuk membuka modal/kolom komentar di komponen utama
+    onCommentClick: () => void; 
 }
 
 const PostActions: React.FC<PostActionsProps> = ({ 
     postId, 
     initialLikes, 
+    commentCount,
     initialIsLiked, 
     initialIsSaved,
     onCommentClick 
@@ -23,9 +25,7 @@ const PostActions: React.FC<PostActionsProps> = ({
 
     const token = localStorage.getItem("token");
 
-    // ==========================================
-    // LOGIKA AKSI (FETCH KE BACKEND)
-    // ==========================================
+
     
     const handleLike = async () => {
         try {
@@ -47,6 +47,7 @@ const PostActions: React.FC<PostActionsProps> = ({
     const handleSave = async () => {
         try {
             setIsSaved(!isSaved);
+            
             const response = await fetch(`http://localhost:5000/api/posts/${postId}/save`, {
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}` }
@@ -74,7 +75,7 @@ const PostActions: React.FC<PostActionsProps> = ({
                 </button>
 
                 <button onClick={onCommentClick} style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", fontSize: "14px" }}>
-                    Comment 💬
+                    {commentCount} Comment 💬
                 </button>
 
                 <button onClick={handleShare} style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", fontSize: "14px" }}>

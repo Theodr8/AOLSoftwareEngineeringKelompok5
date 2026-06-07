@@ -5,6 +5,7 @@ import Navbar from "../component/Navbar";
 import CreatePost from "../component/CreatePost";
 import PostActions from "../component/postComponent";
 
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('foryou');
@@ -50,54 +51,10 @@ const Dashboard = () => {
         }
     };
 
-    // const handleCreatePost = async (event: React.FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-
-    //     const token = localStorage.getItem("token");
-    //     if (!token) {
-    //         navigate("/login");
-    //         return;
-    //     }
-
-    //     if (!body.trim()) {
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await fetch("http://localhost:5000/api/posts/", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Authorization": `Bearer ${token}`,
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: JSON.stringify({ body })
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (!response.ok) {
-    //             throw new Error(data.message || "posts failed");
-    //         }
-
-    //         setBody("");
-    //         await fetchPosts();
-    //     }
-    //     catch (error) {
-    //         alert(error);
-    //         console.error("ada error: ", error);
-    //     }
-    // };
-
     useEffect(() => {
         fetchPosts();
     }, [activeTab, navigate]);
 
-    
-
-    // const handleLogout = () => {
-    //     localStorage.removeItem("token");
-    //     navigate("/login");
-    // };
     return (
     <div style={{ display: "flex",maxWidth: "1200px", margin: "0 auto", height: "100vh" }}>
         <div>
@@ -140,47 +97,86 @@ const Dashboard = () => {
         {loading ? (<p style={{textAlign: "center"}}>Loading...</p>) : posts.length ===0 ? 
             (<p style={{textAlign: "center"}}>No post yet</p>) : (
                 posts.map((post) => <div key={post.id} style={{ borderBottom: "1px solid #eee", padding: "15px 0" }}>
-                    <div
-                        style={{ cursor: post.author?.id ? "pointer" : "default" }}
-                        onClick={() => {
-                            if (post.author?.id) {
-                                navigate(`/user/${post.author.id}`);
-                            }
+            <div
+                onClick={() => {
+                    if (post.author?.id) {
+                        navigate(`/user/${post.author.id}`);
+                    }
+                }}
+                style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    marginBottom: "12px",
+                }}>
+                <img
+                    src={
+                        post.author?.avatarUrl 
+                        ? `http://localhost:5000${post.author?.avatarUrl}` :
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXIdvC1Q4WL7_zA6cJm3yileyBT2OsWhBb9Q&s"
+                    }
+                    alt="avatar"
+                    style={{
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        flexShrink: 0,
+                    }}
+                />
+
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}>
+                    <span
+                        style={{
+                            fontWeight: "bold",
+                            fontSize: "15px",
                         }}
                     >
+                        {post.author?.displayName}
+                    </span>
 
-                        <img 
-                            src={post.author?.avatarUrl || "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg"} 
-                            alt="avatar" 
-                            style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
-                            />
-                    </div>
-                    <div
-                        onClick={() => {
-                            if (post.author?.id) {
-                                navigate(`/user/${post.author.id}`);
-                            }
+                    <span
+                        style={{
+                            color: "gray",
+                            fontSize: "13px",
                         }}
-                        style={{ cursor: post.author?.id ? "pointer" : "default", fontWeight: "bold", marginBottom: "5px" }}
                     >
-                        {post.author?.displayName} <span style={{ color: "gray", fontWeight: "normal" }}> @{post.author?.username}</span>
-                    </div>
-                    <h1 style={{cursor:"pointer"}} onClick={() => {navigate(`/post/${post.id}`)}}>{post.title}</h1>
-                    <p>{post.content || post.body}</p>
+                        @{post.author?.username}
+                    </span>
 
-                    <div style={{ display: "flex", gap: "16px", marginTop: "8px", color: "gray", fontSize: "13px" }}>
-                        <span>{post.likeCount || 0} Likes</span>
-                        <span>{post.commentCount || 0} Comments</span>
-                        <span>{post.saveCount || 0} Saves</span>
-                    </div>
+                    <span
+                        style={{
+                            color: "#999",
+                            fontSize: "12px",
+                        }}
+                    >
+                        {new Date(post.createdAt).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+
+            <h2
+                style={{ cursor: "pointer", margin: "0 0 8px 0" }}
+                onClick={() => navigate(`/post/${post.id}`)}
+            >
+                {post.title}
+            </h2>
+
+            <p>{post.content || post.body}</p>
+
                     
                     <PostActions 
                         postId={post.id}
                         initialLikes={post.likeCount || 0}
-                        // Sesuaikan properti isLiked / isSaved dari json backend-mu jika ada
+                        commentCount={post.commentCount || 0}
                         initialIsLiked={post.isLikedByMe || false} 
                         initialIsSaved={post.isSavedByMe || false}
-                        onCommentClick={() => alert("Buka kolom komentar untuk post ini")} 
+                        onCommentClick={() => navigate(`/post/${post.id}`)} 
                         />
                         </div>
 
