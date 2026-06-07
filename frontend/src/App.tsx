@@ -1,4 +1,4 @@
-import React from 'react'; // Jangan lupa import React
+import React from 'react'; 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
@@ -8,6 +8,8 @@ import Chat from './pages/Chat.tsx';
 import Project from './pages/Project.tsx';
 import UserDetail from './component/UserDetail.tsx';
 import PostDetail from './pages/PostDetail.tsx';
+import FollowersList from './pages/FollowList.tsx';
+import FollowingList from './pages/FollowingList.tsx';
 
 function App() {
   return (
@@ -30,7 +32,8 @@ function App() {
         {/* <Route path="/profile/" */}
         <Route path="/user/:userId" element= {<UserDetail />}/>
         <Route path="/post/:postId" element={<PostDetail />}/>
-
+        <Route path="/followerlist/:userId" element={<FollowersList />} />
+        <Route path="/followinglist/:userId" element={<FollowingList />} />
 
       </Routes>
     </BrowserRouter>

@@ -12,10 +12,8 @@ export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Prom
 
         const suggestion = await prisma.user.findMany({
             where: {
-                // 1. Jangan tampilkan diri sendiri
                 id: { not: currentUserId },
                 
-                // 2. MAGIC: Jangan tampilkan user yang SUDAH di-follow oleh saya
                 followers: {
                     none: {
                         followerId: currentUserId
@@ -31,8 +29,7 @@ export const GetRecommendedUsers = async (req: AuthRequest, res: Response): Prom
             }
         });
 
-        // 3. Tambahkan status isFollowedByMe: false secara manual 
-        // (Karena kita sudah memfilter di atas, otomatis semua yang muncul di sini PASTI belum di-follow)
+
         const formattedSuggestions = suggestion.map(user => ({
             ...user,
             isFollowedByMe: false 
@@ -198,36 +195,50 @@ export const following = async (req: AuthRequest, res:Response): Promise<any> =>
 
 export const viewFollowingList = async (req: AuthRequest, res:Response): Promise<any> => {
     try{
-        const currentUserId = req.user.userId;
+        const currentUserId = req.params.userId;
+        const userId = req.user.userId;
         const followinglist = await prisma.Follow.findMany({
             where :{
                 followerId: currentUserId,
             },
             
             select:{
-                // _count:{
-                    // select:{
-
-                        following:{
-                            select:{
-                                id:true,
-                                username: true,
-                                displayName:true,
-                                avatarUrl: true
-                            }
-                        },
-                    // }
-                        
-                // },
+                following:{
+                    select:{
+                        id:true,
+                        username: true,
+                        displayName:true,
+                        avatarUrl: true,
+                    }
+                },
+                
             }
 
         })
+        const followingIds = followinglist.map((item: any) => item.following.id);
+        const viewerFollowing = await prisma.follow.findMany({
+            where: {
+                followerId: userId,
+                followingId: { in: followingIds }
+            },
+            select: {
+                followingId: true,
+            }
+        });
+        
+        const followedSet = new Set(viewerFollowing.map((item: any) => item.followingId));
+
         const followingCount = await prisma.follow.count({
             where:{
                 followerId:currentUserId
             }
         })
-        res.json({following: followinglist, count:followingCount});
+
+        const formattedFollowing = followinglist.map((follow: any) => ({
+            ...follow,
+            isFollowedByMe: followedSet.has(follow.following.id)
+        }));
+        res.json({following: formattedFollowing, count:followingCount});
     }
     catch (error:any){
         res.status(500).json({error:error.message});
@@ -235,7 +246,8 @@ export const viewFollowingList = async (req: AuthRequest, res:Response): Promise
 }
 export const viewFollowerList = async (req: AuthRequest, res:Response): Promise<any> => {
     try{
-        const currentUserId = req.user.userId;
+        const currentUserId = req.params.userId;
+        const userId = req.user.userId;
         const followerlist = await prisma.Follow.findMany({
             where :{
                 followingId: currentUserId,
@@ -250,19 +262,30 @@ export const viewFollowerList = async (req: AuthRequest, res:Response): Promise<
                         avatarUrl: true
                     }
                 },
-                // users:{
-                    
-                //     username: true,
-                //     displayName: true,
-                // }
             }
         });
+        const followingIds = followerlist.map((item: any) => item.follower.id);
+        const viewerFollowing = await prisma.follow.findMany({
+            where: {
+                followerId: userId,
+                followingId: { in: followingIds }
+            },
+            select: {
+                followingId: true,
+            }
+        });
+        const followedSet = new Set(viewerFollowing.map((item:any) => item.followingId));
+        
         const followerCount = await prisma.Follow.count({
             where:{
                 followingId:currentUserId
             }
         });
-        res.json({followerlist, followerCount});
+        const formattedFollowing = followerlist.map((follow: any) => ({
+            ...follow,
+            isFollowedByMe: followedSet.has(follow.follower.id)
+        }));
+        res.json({follower: formattedFollowing,count: followerCount});
     }
     catch (error:any){
         res.status(500).json({error:error.message});

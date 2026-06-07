@@ -13,14 +13,17 @@ const Follow: React.FC<FollowProps> = ({
     initialIsFollowed
 }) => {
     const [isFollowed, setIsFollowed] = useState(initialIsFollowed);
-
     useEffect(() => {
         setIsFollowed(initialIsFollowed);
     }, [initialIsFollowed]);
 
     const token = localStorage.getItem("token");
-
+    const myId = localStorage.getItem("id");
+    
     const handleFollow = async () => {
+        if (myId === userId){
+            return null;
+        }
         const prevIsFollowed = isFollowed;
         try{
             setIsFollowed(!prevIsFollowed);
@@ -41,6 +44,7 @@ const Follow: React.FC<FollowProps> = ({
     };
 
     return (
+        
         <button 
             onClick={handleFollow}
             style={{

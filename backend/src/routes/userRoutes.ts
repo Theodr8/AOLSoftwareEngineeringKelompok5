@@ -13,8 +13,8 @@ router.get('/',requireAuth, ViewProfile);
 router.patch('/update',requireAuth, upload.single('avatarUrl'),UpdateProfile);
 
 
-router.get('/followinglist',requireAuth, viewFollowingList)
-router.get('/followerlist',requireAuth, viewFollowerList)
+router.get('/followinglist/:userId',requireAuth, viewFollowingList)
+router.get('/followerlist/:userId',requireAuth, viewFollowerList)
 router.post('/:targetUserId/follow', requireAuth, following);
 router.get('/:userId', requireAuth, viewUser);
 // router.post('/:targetUserId/unfollow', requireAuth, unfollowing);
