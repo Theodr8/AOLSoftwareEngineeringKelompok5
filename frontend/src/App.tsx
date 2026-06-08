@@ -4,7 +4,7 @@ import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import Dashboard from './pages/Dashboard.tsx';
 import Profile from './pages/Profile.tsx';
-import Chat from './pages/Chat.tsx';
+// import Chat from './pages/Chat.tsx';
 import Project from './pages/Project.tsx';
 import UserDetail from './component/UserDetail.tsx';
 import PostDetail from './pages/PostDetail.tsx';
@@ -22,7 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile/" element={<Profile />} />
-        <Route path="/chat" element={<Chat />} />
+        {/* <Route path="/chat" element={<Chat />} /> */}
         <Route path="/project" element= {<Project />} />
 
 
