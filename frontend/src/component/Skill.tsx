@@ -32,7 +32,7 @@ const SelectSkillForm: React.FC = () => {
         fetchSkills();
     }, [token]);
 
-    const handleAddSkill = async (e: React.FormEvent) => {
+    const handleAddSkill = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         if (!selectedSkillId) return;
 
@@ -53,7 +53,6 @@ const SelectSkillForm: React.FC = () => {
             if (!response.ok) {
                 console.error("Gagal menambahkan/menarik skill", data);
             } else {
-                // API either returns created userSkill with included `skill`, or { message: "berhasil mencabut skill" }
                 if (data.skill) {
                     setMySkills((prev) => {
                         if (prev.find((s) => s.id === data.skill.id)) return prev;
@@ -75,7 +74,8 @@ const SelectSkillForm: React.FC = () => {
         <div style={{ padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "400px", backgroundColor: "white" }}>
             <h3 style={{ marginTop: 0 }}>Keahlian Saya</h3>
 
-            <form onSubmit={handleAddSkill} style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                
                 <select
                     value={selectedSkillId}
                     onChange={(e) => setSelectedSkillId(e.target.value)}
@@ -93,13 +93,15 @@ const SelectSkillForm: React.FC = () => {
                 </select>
 
                 <button
-                    type="submit"
+                    type="button" 
+                    onClick={handleAddSkill}
                     disabled={loading || !selectedSkillId}
                     style={{ padding: "8px 16px", borderRadius: "6px", backgroundColor: selectedSkillId ? "#000" : "#ccc", color: "#fff", border: "none", cursor: selectedSkillId && !loading ? "pointer" : "not-allowed" }}
                 >
                     {loading ? "..." : "Tambah"}
                 </button>
-            </form>
+                
+            </div>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mySkills.length === 0 ? (
