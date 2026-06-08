@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/requireAuth';
 import prisma from '../lib/prisma';
 import { create } from 'node:domain';
+import fs from 'fs';
+import path from 'path';
 
 export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
@@ -60,8 +62,13 @@ export const viewUserAllPost = async (req: AuthRequest, res: Response): Promise<
 
 export const createPost = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
-    const {body, title} = req.body;
+    let {body, title, imageUrl} = req.body;
     const userId = req.user.userId;
+
+    if(req.file) {
+      imageUrl = `/post/${req.file.filename}`;
+      console.log("data file:", req.file);
+    }
 
     if (!body) {
       return res.status(400).json({message: "Tidak boleh kosong"});
@@ -71,12 +78,18 @@ export const createPost = async (req: AuthRequest, res:Response): Promise<any> =
         title,
         body,
         authorId: userId,
+        imageUrl,
       },
       include: {author : {select : {username : true, displayName: true, avatarUrl: true}}}
     });
-    res.status(201).json({message: "Postingan berhasil terkirim", post: newPost});
+    res.json({message: "Postingan berhasil terkirim", post: newPost});
   }
   catch (error: any){
+  if (req.file){
+      fs.unlink(path.join('public/post', req.file.filename), (err) => {
+          if (err) console.error('Failed to update profile');
+      });
+  }
     res.status(500).json({error: error.message});
   }
 }
@@ -432,6 +445,8 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
         id : postsId
       },
       include: {
+        // title:true,
+        // imageUrl:true,
         author: {
           select:{
             avatarUrl: true,
@@ -469,6 +484,7 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
     
     const formattedPost = {
       ...posts,
+      imageUrl: posts.imageUrl,
       isLikedByMe: !!liked,
       isSavedByMe: !!saved,
       isCommentedByMe: !!commented,

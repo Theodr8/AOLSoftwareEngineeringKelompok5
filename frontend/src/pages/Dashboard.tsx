@@ -4,6 +4,7 @@ import SuggestedDevelopers from "../component/SuggestedDevelopers";
 import Navbar from "../component/Navbar";
 import CreatePost from "../component/CreatePost";
 import PostActions from "../component/postComponent";
+import CreatePostDetail from "./CreatePostDetail";
 
 
 const Dashboard = () => {
@@ -15,6 +16,15 @@ const Dashboard = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("token");
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handlePostCreated = (newPost: any) => {
+        // Tambahkan post baru ke urutan paling atas di layar
+        setPosts(prevPosts => [newPost, ...prevPosts]);
+    };
+
     // const [body, setBody] = useState('');
 
     // useEffect(() => {
@@ -225,7 +235,21 @@ const Dashboard = () => {
             <SuggestedDevelopers/>
         </div>
         </div>
-
+                            <div style={{   height: "40px",
+                                width: "40px",
+                                borderBottom: "1px solid #eee" }}>
+                <button 
+                    onClick={() => setIsModalOpen(true)}
+                    style={{ padding: "15px 14px", borderRadius: "30px", border: "1px solid #ccc", backgroundColor: "white", color: "gray", cursor: "pointer", width: "100%", textAlign: "left" }}
+                >
+                    ╋
+                </button>
+                <CreatePostDetail
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                onSuccess={handlePostCreated} 
+            />
+            </div>
     </div>
     );
 }

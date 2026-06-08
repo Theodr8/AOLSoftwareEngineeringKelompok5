@@ -11,64 +11,8 @@ const PostDetail = () => {
     const navigate = useNavigate();
     const [loading,setLoading] = useState(true);
     const [post, setPost] = useState<any>(null);
-    // const [myId, setMyId] = useState<string | null>(localStorage.getItem("id"));
     const myId = localStorage.getItem("id");
-    // useEffect(() => {
-    //     const resolveMyId = async () => {
-    //         if (myId) {
-    //             return;
-    //         }
 
-    //         const storedToken = localStorage.getItem("token");
-    //         if (!storedToken) {
-    //             return;
-    //         }
-
-    //         try {
-    //             const payloadPart = storedToken.split(".")[1];
-    //             if (payloadPart) {
-    //                 const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-    //                 const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-    //                 const decoded = JSON.parse(atob(padded));
-    //                 if (decoded?.userId) {
-    //                     const resolvedId = String(decoded.userId);
-    //                     localStorage.setItem("id", resolvedId);
-    //                     setMyId(resolvedId);
-    //                     return;
-    //                 }
-    //             }
-    //         }
-    //         catch (error) {
-    //             console.error("gagal membaca token", error);
-    //         }
-
-    //         try {
-    //             const response = await fetch("http://localhost:5000/api/users", {
-    //                 method: "GET",
-    //                 headers: {
-    //                     "Authorization": `Bearer ${storedToken}`,
-    //                     "Content-Type": "application/json"
-    //                 }
-    //             });
-
-    //             if (!response.ok) {
-    //                 return;
-    //             }
-
-    //             const profile = await response.json();
-    //             if (profile?.id) {
-    //                 const resolvedId = String(profile.id);
-    //                 localStorage.setItem("id", resolvedId);
-    //                 setMyId(resolvedId);
-    //             }
-    //         }
-    //         catch (error) {
-    //             console.error("gagal mengambil id profile", error);
-    //         }
-    //     };
-
-    //     resolveMyId();
-    // }, [myId]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -166,6 +110,22 @@ const PostDetail = () => {
                         <p style={{ fontSize: "18px", lineHeight: "1.6", margin: 0, whiteSpace: "pre-wrap" }}>
                             {post.body}
                         </p>
+
+                        {post.imageUrl && (
+                            <div style={{ marginTop: "15px", borderRadius: "8px", overflow: "hidden", border: "1px solid #eee" }}>
+                                <img 
+                                    src={`http://localhost:5000${post.imageUrl}`} 
+                                    alt="Image post" 
+                                    style={{ 
+                                        width: "100%", 
+                                        maxHeight: "500px", 
+                                        objectFit: "cover", 
+                                        display: "block" 
+                                    }} 
+                                />
+                            </div>
+                        )}
+                        
                     </div>
 
                     <div style={{ color: "gray", fontSize: "13px", paddingBottom: "15px", borderBottom: "1px solid #eee", marginBottom: "20px" }}>

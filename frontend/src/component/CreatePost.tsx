@@ -4,6 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 const CreatePost = () => {
     const[body,setBody] = useState('');
     const[title,setTitle] = useState('');
+    const[imageUrl,setImageUrl] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const CreatePost = () => {
                     "Authorization": `Bearer ${token}`,
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify({title,body}),
+                body: JSON.stringify({title,body,imageUrl}),
             });
 
             const data = await response.json();
@@ -52,6 +53,7 @@ const CreatePost = () => {
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
                 <button type="submit" style={{ background: "black", color: "white", padding: "8px 16px", borderRadius: "20px", border: "none" }}>Post</button>
             </div>
+        <input type="text" value={imageUrl} onChange={(e) => setImageUrl("tes")} />
         </form> 
     )
 }

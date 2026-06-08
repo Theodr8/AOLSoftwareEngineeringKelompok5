@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import UserPost from "../component/UserPost";
+import SelectSkillForm from "../component/Skill";
 
 type ProfileType = {
     id?: string;
@@ -16,6 +17,7 @@ type ProfileType = {
     location?: string;
     followerCount?: number;
     followingCount? : number;
+    skills? : string;
 };
 
 const containerStyle: React.CSSProperties = {
@@ -178,6 +180,35 @@ const Profile = () => {
                 {profile.githubUrl && <a href={profile.githubUrl} style={{ color: "#111827" }}>{profile.githubUrl.replace("https://", "")}</a>}
                 {profile.websiteUrl && <a href={profile.websiteUrl} style={{ color: "#111827" }}>{profile.websiteUrl.replace("https://", "")}</a>}
             </div>
+            <hr />
+            <div>
+              My skill:
+              <br />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {profile.skills && profile.skills.length > 0 ? (
+                      profile.skills.map((skill: any) => (
+                          <span 
+                              key={skill.id} 
+                              style={{ 
+                                  padding: "6px 14px", 
+                                  backgroundColor: "#f1f5f9", // Warna abu-abu soft
+                                  color: "#334155",
+                                  borderRadius: "20px", 
+                                  fontSize: "13px", 
+                                  fontWeight: "600",
+                                  border: "1px solid #e2e8f0"
+                              }}
+                          >
+                              {skill.name}
+                          </span>
+                      ))
+                  ) : (
+                      <span style={{ fontSize: "13px", color: "#94a3b8" }}>
+                          Belum ada keahlian yang ditambahkan.
+                      </span>
+                  )}
+              </div>
+            </div>
 
             <div
               style={{
@@ -279,6 +310,10 @@ const Profile = () => {
               <div>
                 <label style={{ display: "block", fontWeight: 600 }}>GitHub</label>
                 <input value={profile.githubUrl || ""} onChange={(e) => setProfile({ ...profile, githubUrl: e.target.value })} style={{ width: "100%", padding: 8, marginTop: 6 }} />
+              </div>
+
+              <div>
+                <SelectSkillForm />
               </div>
 
  

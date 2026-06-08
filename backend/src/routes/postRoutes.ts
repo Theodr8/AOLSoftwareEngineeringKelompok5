@@ -5,13 +5,15 @@ viewDetailedPost, viewLikePost, getAllPosts, getFollowingPosts,
 createPost, likePost, savePost, viewSavePost 
 } from '../controllers/postController';
 import { requireAuth } from '../middleware/requireAuth';
+import { uploadPost } from '../middleware/uploadMiddleware';
+
 
 const router = Router();
 
 // static route
 router.get('/foryou', requireAuth, getAllPosts);
 router.get('/following', requireAuth, getFollowingPosts);
-router.post('/', requireAuth, createPost); 
+router.post('/', requireAuth, uploadPost.single('imageUrl'),createPost); 
 
 // dinamyc route
 router.get('/likedpost/:userId', requireAuth, viewLikePost);
