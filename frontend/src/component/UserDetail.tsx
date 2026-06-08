@@ -97,6 +97,36 @@ const UserDetail= () =>{
                             {userProfile.bio || "Tidak ada bio."}
                         </p>
 
+                        <div>
+              <br />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                Skill:
+                  {userProfile.skills && userProfile.skills.length > 0 ? (
+                      userProfile.skills.map((skill: any) => (
+                          
+                          <span 
+                              key={skill.id} 
+                              style={{ 
+                                  padding: "6px 14px", 
+                                  backgroundColor: "#f1f5f9", // Warna abu-abu soft
+                                  color: "#334155",
+                                  borderRadius: "20px", 
+                                  fontSize: "13px", 
+                                  fontWeight: "600",
+                                  border: "1px solid #e2e8f0"
+                              }}
+                          >
+                              {skill.name}
+                          </span>
+                      ))
+                  ) : (
+                      <span style={{ fontSize: "13px", color: "#94a3b8" }}>
+                        No skill added at the moment
+                      </span>
+                  )}
+              </div>
+            </div>
+
                         <div
                             style={{
                                 display: "flex",

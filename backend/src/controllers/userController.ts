@@ -67,6 +67,12 @@ export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any>
                         following: true
                     }
                 },
+                skills: {
+                    select: {
+                        skill:true
+                    }
+                }
+                
             }
         });
         const ProfileDetail = {
@@ -75,8 +81,11 @@ export const ViewProfile = async (req: AuthRequest, res: Response): Promise<any>
             followingCount : data._count.following,
 
             followers: undefined,
-            _count : undefined
+            _count : undefined,
+
+            skills: data.skills.map((item:any) => item.skill)
         }
+        
         res.json(ProfileDetail);
     }
     catch (error:any){
@@ -365,6 +374,11 @@ export const viewUser = async (req: AuthRequest, res:Response): Promise<any> =>{
                         following: true
                     }
                 },
+                skills: {
+                    select: {
+                        skill:true
+                    }
+                }
             },
             // include: {
             // }
@@ -389,7 +403,8 @@ export const viewUser = async (req: AuthRequest, res:Response): Promise<any> =>{
             isFollowedByMe: alreadyFollow !== null,
 
             followers: undefined,
-            _count : undefined
+            _count : undefined,
+            skills: userDetail.skills.map((item:any) => item.skill)
         }
         res.json({formattedProfile});
     }

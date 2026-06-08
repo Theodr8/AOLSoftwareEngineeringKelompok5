@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PostComment from "../component/PostComment";
 import Navbar from "../component/Navbar";
 import PostActions from "../component/postComponent";
+import DeletePost from "../component/DeletePost";
 
 
 const PostDetail = () => {
@@ -10,64 +11,64 @@ const PostDetail = () => {
     const navigate = useNavigate();
     const [loading,setLoading] = useState(true);
     const [post, setPost] = useState<any>(null);
-    const [myId, setMyId] = useState<string | null>(localStorage.getItem("id"));
+    // const [myId, setMyId] = useState<string | null>(localStorage.getItem("id"));
+    const myId = localStorage.getItem("id");
+    // useEffect(() => {
+    //     const resolveMyId = async () => {
+    //         if (myId) {
+    //             return;
+    //         }
 
-    useEffect(() => {
-        const resolveMyId = async () => {
-            if (myId) {
-                return;
-            }
+    //         const storedToken = localStorage.getItem("token");
+    //         if (!storedToken) {
+    //             return;
+    //         }
 
-            const storedToken = localStorage.getItem("token");
-            if (!storedToken) {
-                return;
-            }
+    //         try {
+    //             const payloadPart = storedToken.split(".")[1];
+    //             if (payloadPart) {
+    //                 const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+    //                 const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    //                 const decoded = JSON.parse(atob(padded));
+    //                 if (decoded?.userId) {
+    //                     const resolvedId = String(decoded.userId);
+    //                     localStorage.setItem("id", resolvedId);
+    //                     setMyId(resolvedId);
+    //                     return;
+    //                 }
+    //             }
+    //         }
+    //         catch (error) {
+    //             console.error("gagal membaca token", error);
+    //         }
 
-            try {
-                const payloadPart = storedToken.split(".")[1];
-                if (payloadPart) {
-                    const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-                    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-                    const decoded = JSON.parse(atob(padded));
-                    if (decoded?.userId) {
-                        const resolvedId = String(decoded.userId);
-                        localStorage.setItem("id", resolvedId);
-                        setMyId(resolvedId);
-                        return;
-                    }
-                }
-            }
-            catch (error) {
-                console.error("gagal membaca token", error);
-            }
+    //         try {
+    //             const response = await fetch("http://localhost:5000/api/users", {
+    //                 method: "GET",
+    //                 headers: {
+    //                     "Authorization": `Bearer ${storedToken}`,
+    //                     "Content-Type": "application/json"
+    //                 }
+    //             });
 
-            try {
-                const response = await fetch("http://localhost:5000/api/users", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${storedToken}`,
-                        "Content-Type": "application/json"
-                    }
-                });
+    //             if (!response.ok) {
+    //                 return;
+    //             }
 
-                if (!response.ok) {
-                    return;
-                }
+    //             const profile = await response.json();
+    //             if (profile?.id) {
+    //                 const resolvedId = String(profile.id);
+    //                 localStorage.setItem("id", resolvedId);
+    //                 setMyId(resolvedId);
+    //             }
+    //         }
+    //         catch (error) {
+    //             console.error("gagal mengambil id profile", error);
+    //         }
+    //     };
 
-                const profile = await response.json();
-                if (profile?.id) {
-                    const resolvedId = String(profile.id);
-                    localStorage.setItem("id", resolvedId);
-                    setMyId(resolvedId);
-                }
-            }
-            catch (error) {
-                console.error("gagal mengambil id profile", error);
-            }
-        };
-
-        resolveMyId();
-    }, [myId]);
+    //     resolveMyId();
+    // }, [myId]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -101,9 +102,16 @@ const PostDetail = () => {
         fetchPost();
     }, [postId, navigate])
 
+
     if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Memuat profil...</p>;
     if (!post) return <p style={{ textAlign: "center", marginTop: "50px" }}>Postingan tidak ditemukan.</p>;
 
+
+
+    const handleRemovePostFromUI = (deletedPostId: string) => {
+        // Filter out (buang) post yang ID-nya sama dengan yang baru dihapus
+        setPost(prevPosts => prevPosts.filter(post => post.id !== deletedPostId));
+    };
 
     return (
 <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
@@ -118,6 +126,13 @@ const PostDetail = () => {
                     >
                         ← Kembali
                     </button>
+
+                        {post.author.id === myId && (
+                            <DeletePost 
+                                postId={post.id} 
+                                onDeleteSuccess={handleRemovePostFromUI} 
+                            />
+                        )}
 
                     <div onClick={() => {
                             if (post.author?.id && post.author.id !== myId) {
