@@ -21,6 +21,7 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'public/uploads')));
+app.use('/post', express.static(path.resolve(process.cwd(), 'public/post')));
 
 // Panggil semua rute dari hub utama
 app.use('/api', routes);

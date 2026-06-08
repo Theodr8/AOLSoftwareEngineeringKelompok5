@@ -114,7 +114,7 @@ const PostDetail = () => {
                         {post.imageUrl && (
                             <div style={{ marginTop: "15px", borderRadius: "8px", overflow: "hidden", border: "1px solid #eee" }}>
                                 <img 
-                                    src={`http://localhost:5000${post.imageUrl}`} 
+                                    src={post.imageUrl ? `http://localhost:5000${post.imageUrl}` : "error"}  
                                     alt="Image post" 
                                     style={{ 
                                         width: "100%", 
