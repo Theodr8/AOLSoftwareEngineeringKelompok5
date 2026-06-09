@@ -24,6 +24,7 @@ router.use('/chat', messageRoutes);
 router.use('/projects', projectRoutes);
 router.use('/search', searchRoute);
 router.use('/skill', skillRoutes);
+router.use('/jobs', jobRoutes);
 
 
 export default router;

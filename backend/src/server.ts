@@ -14,7 +14,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET","POST"]
+    methods: ["GET", "POST"]
   }
 });
 
@@ -26,22 +26,22 @@ app.use('/post', express.static(path.resolve(process.cwd(), 'public/post')));
 // Panggil semua rute dari hub utama
 app.use('/api', routes);
 
-io.on('connection', (socket)=>{
+io.on('connection', (socket) => {
   console.log('User terhubung ke socket', socket.id);
+
   socket.on('join_chat', (roomName) => {
     socket.join(roomName);
-    console.log('tes koneksi user group chat')
+    console.log('tes koneksi user group chat');
   });
 
-  socket.on('send_message', (messageData) =>{
+  socket.on('send_message', (messageData) => {
     socket.to(messageData.roomName).emit('receive_message', messageData);
   });
 
   socket.on('disconnect', () => {
-    console.log('user terputus')
-  })
-
-})
+    console.log('user terputus');
+  });
+});
 
 httpServer.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
