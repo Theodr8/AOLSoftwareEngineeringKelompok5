@@ -19,6 +19,18 @@ export const viewUserAllProjects = async (req: AuthRequest, res:Response): Promi
             displayName: true,
             username: true,
           }
+        },
+        tags: {
+          include: {
+            tag: true,
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            saves: true,
+            comments: true,
+          }
         }
       }
     })
@@ -89,7 +101,8 @@ export const viewLikeProjects = async (req: AuthRequest, res:Response): Promise 
       },
       orderBy: {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true}}
+        author: {select : {id:true, username:true, displayName: true}},
+        tags: {include: {tag: true}}
       }
 
     });
@@ -103,7 +116,7 @@ export const viewLikeProjects = async (req: AuthRequest, res:Response): Promise 
 export const createProject = async(req: AuthRequest, res: Response): Promise<any> =>{
     try{
         const currentUserId = req.user.userId;
-        const {description,title} = req.body;
+        const {title, description, tagId} = req.body;
 
         if (!title) {
             return res.status(500).json({message: "tidak boleh kosong"});
@@ -121,9 +134,24 @@ export const createProject = async(req: AuthRequest, res: Response): Promise<any
                         displayName: true,
 
                     }
+                },
+                _count: {
+                    select: {
+                        likes: true,
+                        saves: true,
+                        comments: true,
+                    }
                 }
             }
         });
+        if (tagId) {
+          await prisma.projectTag.create({
+              data: {
+                  projectId: newProject.id,
+                  tagId
+              },
+          });
+      }
         res.status(201).json(newProject);
     }
     catch(error: any){
@@ -201,29 +229,91 @@ export const viewSaveProjects = async (req: AuthRequest, res:Response): Promise<
 
 }
 
-export const viewProject = async(req: Request, res: Response): Promise<any> => {
+export const viewProject = async(req: AuthRequest, res: Response): Promise<any> => {
     try{
+        const userId = req.user.userId;
+        const projectsId = req.params.projectId;
         const projects = await prisma.project.findMany({
             include : {
                 author : {
                     select : {
+                        id: true,
                         username: true,
                         displayName: true,
                     }
                 },
+                tags: {
+                  include: {
+                    tag: true,
+                  }
+                },
+                _count: {
+                    select: {
+                        likes: true,
+                        saves: true,
+                        comments: true,
+                    }
+                }
             },
             orderBy: {createdAt : 'desc'}
         });
-        res.json(projects);
+        // const [liked, saved,commented] = await Promise.all([
+        //   prisma.projectLike.findUnique({
+        //     where: {userId_projectId: {userId: userId, projectId: projectsId}}
+        //   }),
+        //   prisma.projectSave.findUnique({
+        //     where: {userId_projectId: {userId: userId, projectId: projectsId}}
+        //   }),
+        //   prisma.ProjectComment.findFirst({
+        //     where: {authorId: userId, projectId: projectsId}
+        //   })
+        // ])
+
+        // const formattedProject = {
+        //   ...projects,
+        //   isLikedByMe: !!liked,
+        //   isSavedByMe: !!saved,
+        //   isCommentedByMe: !!commented,
+        // };
+        const formattedProjects = await Promise.all(
+          projects.map(async (project) => {
+            const liked = await prisma.projectLike.findUnique({
+              where: {
+                userId_projectId: {
+                  userId,
+                  projectId: project.id,
+                }
+              }
+            });
+
+            const saved = await prisma.projectSave.findUnique({
+              where: {
+                userId_projectId: {
+                userId,
+                projectId: project.id,
+                }
+              }
+            });
+
+            return {
+              ...project,
+              isLikedByMe: !!liked,
+              isSavedByMe: !!saved,
+            };
+          })
+        );
+
+        res.json(formattedProjects);
     }
     catch(error: any){
         res.status(500).json({error: error.message});
     }
 }
 
-export const getFollowingProjects = async (req: AuthRequest, res:Response): Promise<any> =>{
+export const getFollowingProjects = async (req: Request, res:Response): Promise<any> =>{
     try{
-        const userId = req.user.userId;
+        const userId = req.params.userId;
+        const projectsId = req.params.projectId;
         const following = await prisma.follow.findMany({
             where : {followerId : userId},
             select : {followingId : true}
@@ -251,6 +341,25 @@ export const getFollowingProjects = async (req: AuthRequest, res:Response): Prom
             }
 
         });
+
+        // const [liked, saved,commented] = await Promise.all([
+        //   prisma.projectLike.findUnique({
+        //     where: {userId_projectId: {userId: userId, projectId: projectsId}}
+        //   }),
+        //   prisma.projectSave.findUnique({
+        //     where: {userId_projectId: {userId: userId, projectId: projectsId}}
+        //   }),
+        //   prisma.ProjectComment.findFirst({
+        //     where: {authorId: userId, projectId: projectsId}
+        //   })
+        // ])
+
+        // const formattedProject = {
+        //   ...projects,
+        //   isLikedByMe: !!liked,
+        //   isSavedByMe: !!saved,
+        //   isCommentedByMe: !!commented,
+        // };
         res.json(projects);
     }
     catch(error: any){
@@ -275,6 +384,11 @@ export const viewDetailedProject = async (req: AuthRequest, res:Response): Promi
             id: true,
             username: true,
             displayName: true,
+          }
+        },
+        tags: {
+          include: {
+            tag: true,
           }
         },
         _count: {
@@ -374,14 +488,16 @@ export const createComment = async (req:AuthRequest, res:Response): Promise<any>
       include:{
         author:{
           select:{
+            id:true,
             username:true,
             displayName:true,
+            avatarUrl: true
           }
         }
       }
 
     })
-    res.status(500).json({message:"berhasil dikirim"});
+    res.status(200).json({message:"berhasil dikirim"});
   }
   catch(error: any){
     res.status(500).json({error: error.message});
@@ -418,4 +534,50 @@ export const deleteProject = async (req:AuthRequest, res:Response): Promise<any>
   catch(error: any){
     res.status(500).json({error: error.message});
   }
+}
+
+export const addProjectTag = async (req: AuthRequest, res: Response): Promise<any> =>{
+    try{
+        const projectId = req.params.projectId;
+        const { tagId } = req.body;
+
+        if(!tagId){
+            return res.status(400).json({message: "Tag tidak boleh kosong"});
+        }
+
+        const existTag = await prisma.projectTag.findUnique({
+            where : {
+                projectId_tagId: {
+                    projectId: projectId,
+                    tagId: tagId,
+                }
+            }
+        });
+
+        if(existTag){
+            await prisma.projectTag.deleteMany({
+                where:{
+                    projectId: projectId,
+                    tagId: tagId
+                }
+            })
+            return res.json({message: "berhasil mencabut tag"});
+        }
+
+        const newTag = await prisma.projectTag.create({
+            data:{
+                projectId: projectId,
+                tagId: tagId
+            },
+            include : {
+                tag: true
+            }
+        });
+
+        res.json(newTag);
+
+    }
+    catch (error:any){
+        res.status(500).json({error: error.message})
+    }
 }
