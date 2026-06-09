@@ -74,6 +74,9 @@ const ProjectDetail = () => {
             <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
                 <div style={{ maxWidth: "700px", margin: "0 auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", padding: "30px" }}>
                     
+                    <div style={{display: "flex", justifyContent:"space-between"}}>
+
+
                     <button 
                         onClick={() => navigate(-1)} // navigate(-1) berarti kembali ke halaman sebelumnya
                         style={{ display: "flex", alignItems: "center", background: "none", border: "none", color: "gray", cursor: "pointer", fontSize: "14px", marginBottom: "20px", padding: 0 }}
@@ -87,6 +90,7 @@ const ProjectDetail = () => {
                                 onDeleteSuccess={handleRemovePostFromUI} 
                             />
                         )}
+                    </div>
 
                     <div onClick={() => {
                             if (project.author?.id && project.author.id !== myId) {

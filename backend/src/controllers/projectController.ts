@@ -120,7 +120,7 @@ export const viewLikeProjects = async (req: AuthRequest, res:Response): Promise 
       },
       orderBy: {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true}},
+        author: {select : {id:true, avatarUrl: true,username:true, displayName: true}},
         tags: {include: {tag: true}},
         _count: {
           select: {
@@ -261,7 +261,7 @@ export const viewSaveProjects = async (req: AuthRequest, res:Response): Promise<
       },
       orderBy : {createdAt: 'desc'},
       include: {
-        author: {select : {id:true, username:true, displayName: true}},
+        author: {select : {id:true,avatarUrl:true, username:true, displayName: true}},
                 _count: {
           select: {
             likes: true,

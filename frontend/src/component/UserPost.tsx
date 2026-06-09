@@ -100,8 +100,8 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
 
     
 
-    return (
-        <div style={{ borderTop: "1px solid #eee", padding: "20px 30px" }}>
+        return (
+ <div style={{ borderTop: "1px solid #eee", padding: "20px 30px" }}>
             
     <div style={{ display: "flex", borderBottom: "1px solid #ccc", marginBottom: "15px" }}>
         <div onClick={() => { setActiveTab("posts"); setActiveDropdown("posts"); }}
@@ -135,48 +135,36 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
         </div>
     )}
 
-            {displayData.length === 0 ? (
-                <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Belum ada {isShowingProjects ? "project" : "postingan"}.</p>
-            ) : (
-                displayData.map(item => {
-                    const postAuthorName = item.author?.displayName || displayName;
-                    
-                    // const postAvatarUrl = item.author?.avatarUrl 
-                    //     ? `http://localhost:5000${item.author?.avatarUrl}`
-                    //     : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
+    {displayData.length === 0 ? (
+        <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Belum ada {isShowingProjects ? "project" : "postingan"}.</p>
+    ) : (
+        displayData.map(item => {
+            const postAuthorName = item.author?.displayName || displayName;
+            
+            // const postAvatarUrl = item.author?.avatarUrl 
+            //     ? `http://localhost:5000${item.author?.avatarUrl}`
+            //     : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
 
-                    return (
-                        <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
-                            <div 
-                                onClick={() => {
-                                    if (item.author?.id && item.author.id !== myId) {
-                                        navigate(`/user/${item.author.id}`);
-                                    }
-                                    else {
-                                        navigate(`/profile`)
-                                    }
-                                }}
-                                style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                                    
-                                
-                                <img 
-                                    src={getImageUrl(item.author.avatarUrl)} 
-                                    alt="avatar" 
-                                    style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
-                                />
-                                <div style={{flex:1}}>
-                                    <div style={{ fontWeight: "bold", fontSize: "14px" }}>
-                                        {postAuthorName}
-                                    </div>
-                                    
-                                    {item.author?.username && (
-                                        <div style={{ color: "gray", fontSize: "11px" }}>@{item.author.username}</div>
-                                    )}
-
-                                    <div style={{ color: "gray", fontSize: "12px" }}>
-                                        {new Date(item.createdAt).toLocaleDateString()}
-                                    </div>
-                                </div>
+            return (
+                <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
+                    <div 
+                        onClick={() => {
+                            if (item.author?.id && item.author.id !== myId) {
+                                navigate(`/user/${item.author.id}`);
+                            } else {
+                                navigate(`/profile`)
+                            }
+                        }}
+                        style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                            
+                        <img 
+                            src={getImageUrl(item.author.avatarUrl)} 
+                            alt="avatar" 
+                            style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
+                        />
+                        <div style={{flex:1}}>
+                            <div style={{ fontWeight: "bold", fontSize: "14px" }}>
+                                {postAuthorName}
                             </div>
                             
                             {item.author?.username && (
@@ -189,6 +177,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                         </div>
                     </div>
                     
+                    {/* PERBAIKAN 1: Navigasi didasarkan pada activeDropdown, bukan activeTab */}
                     <div style={{cursor:"pointer"}} onClick={() => {
                         const path = activeDropdown === "posts" ? "post" : "project";
                         navigate(`/${path}/${item.id}`);
@@ -207,6 +196,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                         paddingTop: "10px",
                         borderTop: "1px solid #eee"
                     }}>
+                        {/* PERBAIKAN 2: Tag project menggunakan kondisi activeDropdown */}
                         {activeDropdown === "projects" ? ( 
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                 <div style={{
@@ -223,6 +213,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                             <div/>
                         )}
 
+                        {/* PERBAIKAN 3: Memunculkan actions berdasarkan activeDropdown */}
                         {activeDropdown === "posts" ? (
                             <PostActions 
                                 postId={item.id}

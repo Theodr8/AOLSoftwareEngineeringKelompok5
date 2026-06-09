@@ -48,7 +48,7 @@ const DeleteProject: React.FC<DeleteProjectProps>= ({projectId, onDeleteSuccess}
                 background: "none",
                 border: "none",
                 color: isDeleting ? "gray" : "#dc2626", // Warna merah untuk aksi destruktif
-                fontSize: "13px",
+                fontSize: "27px",
                 fontWeight: "bold",
                 cursor: isDeleting ? "not-allowed" : "pointer",
                 padding: "4px 8px",
@@ -58,7 +58,7 @@ const DeleteProject: React.FC<DeleteProjectProps>= ({projectId, onDeleteSuccess}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#fee2e2"}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
         >
-            {isDeleting ? "Menghapus..." : "Hapus"}
+            {isDeleting ? "🗑 Menghapus..." : "🗑"}
         </button>
     )
 }

@@ -243,20 +243,46 @@ const Dashboard = () => {
             <SuggestedDevelopers/>
         </div>
         </div>
-                            <div style={{   height: "40px",
-                                width: "40px",
-                                borderBottom: "1px solid #eee" }}>
+            <div style={{ 
+                position: "fixed",
+                bottom: "40px",
+                right: "60px",
+                zIndex: 9999,
+                height: "80px",  
+                width: "80px",
+            }}>
                 <button 
                     onClick={() => setIsModalOpen(true)}
-                    style={{ padding: "15px 14px", borderRadius: "30px", border: "1px solid #ccc", backgroundColor: "white", color: "gray", cursor: "pointer", width: "100%", textAlign: "left" }}
+                    style={{ 
+                        width: "100%", 
+                        height: "100%", 
+                        borderRadius: "50%", 
+                        border: "none",           
+                        backgroundColor: "#000",  
+                        color: "#fff",        
+                        cursor: "pointer", 
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.2)", // 4. BAYANGAN lebih lembut & lebar agar benar-benar "melayang"
+                        transition: "transform 0.2s ease-in-out",     // 5. Animasi halus jika diklik
+                    }}
+                    // Tambahan animasi sederhana saat di-hover (opsional, ditaruh di CSS / styled-components lebih baik)
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                 >
-                    ╋
+                    {/* 6. Ganti simbol ╋ dengan SVG bawaan yang 100% simetris dan elegan */}
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
                 </button>
+                
                 <CreatePostDetail
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                onSuccess={handlePostCreated} 
-            />
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={handlePostCreated} 
+                />
             </div>
     </div>
     );

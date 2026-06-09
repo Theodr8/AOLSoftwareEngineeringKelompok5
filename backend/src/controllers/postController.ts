@@ -73,7 +73,7 @@ export const createPost = async (req: AuthRequest, res:Response): Promise<any> =
     if (!body) {
       return res.status(400).json({message: "Tidak boleh kosong"});
     }
-    const newPost = await prisma.post.create({
+    const post = await prisma.post.create({
       data: {
         title,
         body,
@@ -82,7 +82,7 @@ export const createPost = async (req: AuthRequest, res:Response): Promise<any> =
       },
       include: {author : {select : {username : true, displayName: true, avatarUrl: true}}}
     });
-    res.json({message: "Postingan berhasil terkirim", post: newPost});
+    res.json(post);
   }
   catch (error: any){
   if (req.file){
