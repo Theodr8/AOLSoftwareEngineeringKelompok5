@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
+import Logo from "../assets/Logo.png"
 
 const Register = () =>{
     const [username, setUsername] = useState('');
@@ -59,11 +60,12 @@ const Register = () =>{
       }}
     >
       <img
-        src={"/assets/logo.png"}
+        src={Logo}
         alt="GoDev"
         style={{
-          width: "100px",
-          marginBottom: "15px",
+          width: "180px",
+          height: "auto",
+          marginBottom: "-35px",
         }}
       />
 

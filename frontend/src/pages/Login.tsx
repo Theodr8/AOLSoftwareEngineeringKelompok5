@@ -1,6 +1,7 @@
 // import React from "react";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Logo from "../assets/Logo.png"
 
 const Login = () => {
     const [email,setEmail] = useState('');
@@ -53,11 +54,13 @@ const Login = () => {
     {/* Logo */}
     <div style={{ textAlign: "center" }}>
       <img
-        src={"/assets/logo.png"}
+        src={Logo}
         alt="GoDev"
         style={{
-          width: "90px",
-          marginBottom: "15px",
+          height: "180px",
+          width: "auto",
+          objectFit: "contain",
+          marginBottom: "-65px",
         }}
       />
 
