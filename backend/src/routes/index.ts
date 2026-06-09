@@ -7,6 +7,7 @@ import messageRoutes from './messageRoutes';
 import projectRoutes from './projectRoutes';
 import searchRoute from './searchRoute';
 import skillRoutes from './skillRoutes';
+import tagRoute from './tagRoute';
 
 const router = Router();
 
@@ -22,9 +23,10 @@ router.use('/users', userRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/chat', messageRoutes);
 router.use('/projects', projectRoutes);
+router.use('/tags', tagRoute);
 router.use('/search', searchRoute);
 router.use('/skill', skillRoutes);
-router.use('/jobs', jobRoutes);
+// router.use('/jobs', jobRoutes);
 
 
 export default router;

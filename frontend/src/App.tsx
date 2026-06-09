@@ -8,6 +8,7 @@ import Explore from "./pages/Explore";
 import Project from './pages/Project.tsx';
 import UserDetail from './component/UserDetail.tsx';
 import PostDetail from './pages/PostDetail.tsx';
+import ProjectDetail from './pages/ProjectDetail.tsx';
 import FollowersList from './pages/FollowList.tsx';
 import FollowingList from './pages/FollowingList.tsx';
 import ChatPage from './pages/ChatPage.tsx';
@@ -28,6 +29,7 @@ function App() {
 
         <Route path="/user/:userId" element= {<UserDetail />}/>
         <Route path="/post/:postId" element={<PostDetail />}/>
+        <Route path="/project/:projectId" element={<ProjectDetail />}/>
         <Route path="/followerlist/:userId" element={<FollowersList />} />
         <Route path="/followinglist/:userId" element={<FollowingList />} />
 

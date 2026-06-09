@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PostActions from "./postComponent";
+import ProjectActions from "./ProjectComponent";
 
 interface UserPostsProps {
     userId: string;
@@ -97,40 +98,42 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
 
     if (loading) return <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Memuat data...</p>;
 
+    
+
     return (
         <div style={{ borderTop: "1px solid #eee", padding: "20px 30px" }}>
             
-            <div style={{ display: "flex", borderBottom: "1px solid #ccc", marginBottom: "15px" }}>
-                <div onClick={() => { setActiveTab("posts"); setActiveDropdown("posts"); }}
-                    style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "posts" ? "bold" : "normal", borderBottom: activeTab === "posts" ? "3px solid blue" : "none" }}>
-                    Posts
-                </div>
-                <div onClick={() => { setActiveTab("projects"); setActiveDropdown("projects"); }}
-                    style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "projects" ? "bold" : "normal", borderBottom: activeTab === "projects" ? "3px solid blue" : "none" }}>
-                    Projects
-                </div>
-                <div onClick={() => setActiveTab("liked")}
-                    style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "liked" ? "bold" : "normal", borderBottom: activeTab === "liked" ? "3px solid blue" : "none" }}>
-                    Liked
-                </div>
-                <div onClick={() => setActiveTab("saved")}
-                    style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "saved" ? "bold" : "normal", borderBottom: activeTab === "saved" ? "3px solid blue" : "none" }}>
-                    Saved
-                </div>
-            </div>
+    <div style={{ display: "flex", borderBottom: "1px solid #ccc", marginBottom: "15px" }}>
+        <div onClick={() => { setActiveTab("posts"); setActiveDropdown("posts"); }}
+            style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "posts" ? "bold" : "normal", borderBottom: activeTab === "posts" ? "3px solid blue" : "none" }}>
+            Posts
+        </div>
+        <div onClick={() => { setActiveTab("projects"); setActiveDropdown("projects"); }}
+            style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "projects" ? "bold" : "normal", borderBottom: activeTab === "projects" ? "3px solid blue" : "none" }}>
+            Projects
+        </div>
+        <div onClick={() => setActiveTab("liked")}
+            style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "liked" ? "bold" : "normal", borderBottom: activeTab === "liked" ? "3px solid blue" : "none" }}>
+            Liked
+        </div>
+        <div onClick={() => setActiveTab("saved")}
+            style={{ flex: 1, textAlign: "center", padding: "15px", cursor: "pointer", fontWeight: activeTab === "saved" ? "bold" : "normal", borderBottom: activeTab === "saved" ? "3px solid blue" : "none" }}>
+            Saved
+        </div>
+    </div>
 
-            {(activeTab === "liked" || activeTab === "saved") && (
-                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
-                    <select 
-                        value={activeDropdown} 
-                        onChange={(e) => setActiveDropdown(e.target.value)}
-                        style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #ccc", outline: "none", cursor: "pointer" }}
-                    >
-                        <option value="posts">Tampilkan Posts</option>
-                        <option value="projects">Tampilkan Projects</option>
-                    </select>
-                </div>
-            )}
+    {(activeTab === "liked" || activeTab === "saved") && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
+            <select 
+                value={activeDropdown} 
+                onChange={(e) => setActiveDropdown(e.target.value)}
+                style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #ccc", outline: "none", cursor: "pointer" }}
+            >
+                <option value="posts">Tampilkan Posts</option>
+                <option value="projects">Tampilkan Projects</option>
+            </select>
+        </div>
+    )}
 
             {displayData.length === 0 ? (
                 <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Belum ada {isShowingProjects ? "project" : "postingan"}.</p>
@@ -175,28 +178,78 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     </div>
                                 </div>
                             </div>
-                            <div style={{cursor:"pointer"}} onClick={() => navigate(`/post/${item.id}`)} >
+                            
+                            {item.author?.username && (
+                                <div style={{ color: "gray", fontSize: "11px" }}>@{item.author.username}</div>
+                            )}
 
-                            <h1>{item.title}</h1>
-                            <p
-                            style={{ fontSize: "15px", margin: 0 }}>
-                                {item.body  || item.description} 
-                            </p>
+                            <div style={{ color: "gray", fontSize: "12px" }}>
+                                {new Date(item.createdAt).toLocaleDateString()}
                             </div>
-                                <PostActions 
+                        </div>
+                    </div>
+                    
+                    <div style={{cursor:"pointer"}} onClick={() => {
+                        const path = activeDropdown === "posts" ? "post" : "project";
+                        navigate(`/${path}/${item.id}`);
+                    }}>
+                        <h1>{item.title}</h1>
+                        <p style={{ fontSize: "15px", margin: 0 }}>
+                            {item.body  || item.description} 
+                        </p>
+                    </div>
+
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginTop: "12px",
+                        paddingTop: "10px",
+                        borderTop: "1px solid #eee"
+                    }}>
+                        {activeDropdown === "projects" ? ( 
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <div style={{
+                                    width: "10px",
+                                    height: "10px",
+                                    borderRadius: "50%",
+                                    backgroundColor: "#3776AB"
+                                }} />
+                                <span style={{ fontSize: "13px", fontWeight: "500" }}>
+                                    {item.tags?.[0]?.tag?.name ?? "Unknown"}
+                                </span>
+                            </div>
+                        ) : (
+                            <div/>
+                        )}
+
+                        {activeDropdown === "posts" ? (
+                            <PostActions 
                                 postId={item.id}
                                 initialLikes={item.likeCount || 0}
                                 commentCount={item.commentCount || 0}
                                 initialIsLiked={item.isLikedByMe || false} 
                                 initialIsSaved={item.isSavedByMe || false}
                                 onCommentClick={() => navigate(`/post/${item.id}`)} 
-                                />
-                        </div>
-                    );
-                })
-            )}
-        </div>
-    )
+                            /> 
+                        ) : activeDropdown === "projects" ? (
+                            <ProjectActions
+                                projectId={item.id}
+                                initialLikes={item.likeCount || 0}
+                                commentCount={item.commentCount || 0}
+                                initialIsLiked={item.isLikedByMe || false} 
+                                initialIsSaved={item.isSavedByMe || false}
+                                onCommentClick={() => navigate(`/post/${item.id}`)}
+                            />
+                        ) : null} 
+                    </div>
+                </div>
+            );
+        })
+    )}
+</div>
+    );
+
 }
 
 export default UserPost;
