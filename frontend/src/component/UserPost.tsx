@@ -82,6 +82,16 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
         fetchPost();
     }, [userId, activeTab, activeDropdown, navigate]);
 
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     const isShowingProjects = activeTab === "projects" || ((activeTab === "liked" || activeTab === "saved") && activeDropdown === "projects");
     const displayData = isShowingProjects ? projects : posts;
 
@@ -128,9 +138,9 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                 displayData.map(item => {
                     const postAuthorName = item.author?.displayName || displayName;
                     
-                    const postAvatarUrl = item.author?.avatarUrl 
-                        ? `http://localhost:5000${item.author?.avatarUrl}`
-                        : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
+                    // const postAvatarUrl = item.author?.avatarUrl 
+                    //     ? `http://localhost:5000${item.author?.avatarUrl}`
+                    //     : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
 
                     return (
                         <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
@@ -147,7 +157,7 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     
                                 
                                 <img 
-                                    src={postAvatarUrl} 
+                                    src={getImageUrl(item.author.avatarUrl)} 
                                     alt="avatar" 
                                     style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
                                 />

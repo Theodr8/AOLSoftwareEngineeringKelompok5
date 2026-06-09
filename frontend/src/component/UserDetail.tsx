@@ -56,6 +56,16 @@ const UserDetail= () =>{
     if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Memuat profil...</p>;
     if (!userProfile) return <p style={{ textAlign: "center", marginTop: "50px" }}>User tidak ditemukan.</p>;
     
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     return(
         <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
             <Navbar />
@@ -63,7 +73,6 @@ const UserDetail= () =>{
             <div style={{marginLeft: "250px", flex: 1, padding: "20px", overflowY: "auto" }}>
                 <div style={{ maxWidth: "800px", margin: "0 auto", backgroundColor: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
                     
-                    {/* --- BAGIAN BANNER & INFO (Mirip dengan Profile.tsx tapi tanpa tombol Edit) --- */}
                     <div style={{ height: "200px", backgroundColor: "#e2e2e2", position: "relative" }}>
 
                     </div>
@@ -71,7 +80,7 @@ const UserDetail= () =>{
                     <div style={{ padding: "0 30px 30px 30px", position: "relative" }}>
                         <div style={{ position: "relative", width: "150px", height: "150px", marginTop: "-75px", borderRadius: "50%", backgroundColor: "white", padding: "4px" }}>
                             <img 
-                                src={userProfile.avatarUrl ? `http://localhost:5000${userProfile.avatarUrl}` : "https://via.placeholder.com/150"} 
+                                src={getImageUrl(userProfile.avatarUrl)} 
                                 alt="Avatar" 
                                 style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} 
                             />

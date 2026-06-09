@@ -38,6 +38,17 @@ const SuggestedDevelopers = () => {
     if (loading){
         return <p style={{ fontSize: "14px", color: "gray" }}>Mencari developer...</p>;
     }
+
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     return (
     <div style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
       <h4 style={{ marginTop: 0 }}>Suggested Developers</h4>
@@ -51,7 +62,8 @@ const SuggestedDevelopers = () => {
 
               <div style={{ fontWeight: "bold", fontSize: "14px" }}>                   
                                 <img 
-                                    src={`http://localhost:5000${dev.avatarUrl}` ? `http://localhost:5000${dev.avatarUrl}` : dev.avatarUrl} 
+                                    src={getImageUrl(dev.avatarUrl)}
+                                    // src={`http://localhost:5000${dev.avatarUrl}` ? `http://localhost:5000${dev.avatarUrl}` : dev.avatarUrl} 
                                     alt="avatar" 
                                     style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
                                 /></div>

@@ -449,10 +449,10 @@ export const viewDetailedPost = async (req: AuthRequest, res:Response): Promise<
         // imageUrl:true,
         author: {
           select:{
-            avatarUrl: true,
             id: true,
             username: true,
             displayName: true,
+            avatarUrl: true,
           }
         },
         _count: {
