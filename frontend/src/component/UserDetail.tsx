@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import Follow from "./Follow";
 import UserPost from "../component/UserPost";
+import ChatRoom from "../pages/Chat";
 
 // interface UserProps{
 //     userId: string;
@@ -84,12 +85,21 @@ const UserDetail= () =>{
                         </div>
                         <div>
 
+                        <span>
+                        {/* <ChatRoom 
+                        targetUserId={userProfile.id}
+                        targetUserName={userProfile.displayName}
+                        /> */}
+ 
+                        <button style ={{borderRadius: "39px", color:"white", height:"40px", width:"45px",margin:"10px", cursor:"pointer" }}onClick={() => navigate(`/chat/${userProfile.id}`)}>🗨️</button>
+
                         <Follow 
                         userId= {userProfile.id}
                         initialFollower = {0}
                         initialFollowing= {0}
                         initialIsFollowed = {userProfile.isFollowedByMe ?? userProfile.isFollowedByme ?? false}
                         />
+                        </span>
                         </div>
                         </div>
 

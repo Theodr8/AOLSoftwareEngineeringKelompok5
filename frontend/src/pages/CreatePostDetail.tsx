@@ -61,7 +61,6 @@ const CreatePostDetail: React.FC<createPostProps> = ({isOpen, onClose, onSuccess
                 method: 'POST',
                 headers : {
                     "Authorization": `Bearer ${token}`,
-                    'content-type': 'application/json'
                 },
                 body: formData,
             });

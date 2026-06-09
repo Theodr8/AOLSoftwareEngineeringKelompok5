@@ -64,19 +64,22 @@ const PostDetail = () => {
             <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
                 <div style={{ maxWidth: "700px", margin: "0 auto", backgroundColor: "white", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", padding: "30px" }}>
                     
+                    <div style={{display: "flex", justifyContent:"space-between"}}>
+
                     <button 
-                        onClick={() => navigate(-1)} // navigate(-1) berarti kembali ke halaman sebelumnya
+                        onClick={() => navigate(-1)} 
                         style={{ display: "flex", alignItems: "center", background: "none", border: "none", color: "gray", cursor: "pointer", fontSize: "14px", marginBottom: "20px", padding: 0 }}
-                    >
+                        >
                         ← Kembali
                     </button>
 
                         {post.author.id === myId && (
                             <DeletePost 
-                                postId={post.id} 
-                                onDeleteSuccess={handleRemovePostFromUI} 
+                            postId={post.id} 
+                            onDeleteSuccess={handleRemovePostFromUI} 
                             />
                         )}
+                    </div>
 
                     <div onClick={() => {
                             if (post.author?.id && post.author.id !== myId) {
@@ -114,7 +117,7 @@ const PostDetail = () => {
                         {post.imageUrl && (
                             <div style={{ marginTop: "15px", borderRadius: "8px", overflow: "hidden", border: "1px solid #eee" }}>
                                 <img 
-                                    src={`http://localhost:5000${post.imageUrl}`} 
+                                    src={post.imageUrl ? `http://localhost:5000${post.imageUrl}` : "error"}  
                                     alt="Image post" 
                                     style={{ 
                                         width: "100%", 

@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 const CreatePost = () => {
     const[body,setBody] = useState('');
     const[title,setTitle] = useState('');
-    const[imageUrl,setImageUrl] = useState('');
+    // const[imageUrl,setImageUrl] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     
     const navigate = useNavigate();
@@ -23,9 +23,9 @@ const CreatePost = () => {
                 method: 'POST',
                 headers : {
                     "Authorization": `Bearer ${token}`,
-                    'content-type': 'application/json'
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify({title,body,imageUrl}),
+                body: JSON.stringify({title,body}),
             });
 
             const data = await response.json();
@@ -33,7 +33,9 @@ const CreatePost = () => {
             if (!response.ok){
                 throw new Error(data.message || 'create posts failed');
             }
-
+            
+            setTitle("");
+            setBody("");
             alert ("berhasil posting");
 
         } catch (error:any){
@@ -53,7 +55,7 @@ const CreatePost = () => {
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
                 <button type="submit" style={{ background: "black", color: "white", padding: "8px 16px", borderRadius: "20px", border: "none" }}>Post</button>
             </div>
-        <input type="text" value={imageUrl} onChange={(e) => setImageUrl("tes")} />
+        {/* <input type="text" value={imageUrl} onChange={(e) => setImageUrl("")} /> */}
         </form> 
     )
 }
