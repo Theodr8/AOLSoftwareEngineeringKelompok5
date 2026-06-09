@@ -6,6 +6,6 @@ import { requireAuth } from "../middleware/requireAuth";
 const router = Router()
 
 router.get('/:userId',requireAuth, getChatHistory);
-router.post('/:userId',requireAuth, sendMessage);
+router.post('/:userId/send',requireAuth, sendMessage);
 
 export default router;

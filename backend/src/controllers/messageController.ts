@@ -21,7 +21,7 @@ export const getChatHistory = async (req: AuthRequest, res: Response): Promise <
         res.json(messages)
     }
     catch(error: any){
-        error.status(500).json({error: error.message});
+        res.status(500).json({error: error.message});
     }
 }
 
@@ -35,6 +35,14 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<any>
         
         if (!body){
             return res.status(400).json({message: "Pesan tidak boleh kosong"});
+        }
+
+        const targetUserExists = await prisma.user.findUnique({
+            where: { id: targetUserId }
+        });
+
+        if (!targetUserExists) {
+            return res.status(404).json({ message: "Gagal mengirim pesan: User tujuan tidak ditemukan." });
         }
 
         let conversation = await prisma.conversation.findFirst({
@@ -68,9 +76,19 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<any>
                 receiverId: targetUserId,
             }
         });
-        res.status(201).json(newMessage);
-    }
-    catch(error: any){
-        res.status(500).json({error: error.message})
-    }
+
+        const io = req.app.get("io");
+        if (io) {
+                console.log(`[SOCKET] Memancarkan pesan ke ruangan (ID): ${targetUserId}`);
+                io.to(targetUserId).emit("pesanBaru", newMessage);
+            } else {
+                console.error("PERINGATAN: Socket.io tidak ditemukan");
+            }
+            io.to(receiverId).emit("pesanBaru",newMessage);
+
+            res.status(201).json(newMessage);
+        }
+        catch(error: any){
+            res.status(500).json({error: error.message})
+        }
 }
