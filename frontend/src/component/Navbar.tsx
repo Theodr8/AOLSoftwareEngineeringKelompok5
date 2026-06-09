@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -48,31 +49,43 @@ const Navbar = () => {
         }}>
             <h2>GoDev</h2>
             
-            <ul style={{ listStyle: "none", padding: 0, lineHeight: "2.5", flex: 1 }}>
-                <li style={{ fontWeight: "bold" }}>
-                    <Link to="/dashboard" style={{ textDecoration: "none", color: "inherit" }}>
+            <nav style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                <NavLink to="/dashboard" style={({ isActive }) => ({
+                    textDecoration: "none",
+                    fontSize: "18px",
+                    fontWeight: isActive ? "bold" : "normal",
+                    color: isActive ? "#1800ad" : "#666" 
+                })}>
                         Home
-                    </Link>
-                </li>
-                <li style={{ fontWeight: "bold" }}>
-                    <Link to="/explore" style={{ textDecoration: "none", color: "inherit" }}>
+                </NavLink>
+                <NavLink to="/explore" style={({ isActive }) => ({
+                    textDecoration: "none",
+                    fontSize: "18px",
+                    fontWeight: isActive ? "bold" : "normal",
+                    color: isActive ? "#1800ad" : "#666" 
+                })}>
                         Explore
-                    </Link>
-                </li>
-                <li style={{ fontWeight: "bold" }}>
-                    <Link to="/project" style={{ textDecoration: "none", color: "inherit" }}>
+                </NavLink>
+                <NavLink to="/project"  style={({ isActive }) => ({
+                    textDecoration: "none",
+                    fontSize: "18px",
+                    fontWeight: isActive ? "bold" : "normal",
+                    color: isActive ? "#1800ad" : "#666" 
+                })}>
                         Project
-                    </Link>
-                </li>
-                <li style={{ fontWeight: "bold" }}>
-                    <Link to="/chat" style={{ textDecoration: "none", color: "inherit" }}>
+                </NavLink>
+                <NavLink to="/chat" style={({ isActive }) => ({
+                    textDecoration: "none",
+                    fontSize: "18px",
+                    fontWeight: isActive ? "bold" : "normal",
+                    color: isActive ? "#1800ad" : "#666" 
+                })}>
                         Chat
-                    </Link>
-                </li>
-                <li>Analytics</li>
-            </ul>
+                </NavLink>
+                {/* <navlink>Analytics</navlink> */}
+            </nav>
 
-            <div style={{ borderTop: "1px solid #eee", paddingTop: "20px" }}>
+            <div style={{  paddingTop: "350px" }}>
                 
                 {profile && (
                     <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>

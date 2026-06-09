@@ -40,7 +40,6 @@ const ChatPage: React.FC = () => {
             return `http://localhost:5000${url}`;
         };
 
-    // Cari data lengkap user target berdasarkan ID di URL
     const activeContact = contacts.find(c => c.userId === targetUserId);
 
     return (

@@ -47,8 +47,8 @@ const DeletePost: React.FC<DeletePostProps>= ({postId, onDeleteSuccess}) => {
             style={{
                 background: "none",
                 border: "none",
-                color: isDeleting ? "gray" : "#dc2626", // Warna merah untuk aksi destruktif
-                fontSize: "13px",
+                color: isDeleting ? "gray" : "#dc2626", 
+                fontSize: "27px",
                 fontWeight: "bold",
                 cursor: isDeleting ? "not-allowed" : "pointer",
                 padding: "4px 8px",
@@ -58,7 +58,7 @@ const DeletePost: React.FC<DeletePostProps>= ({postId, onDeleteSuccess}) => {
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#fee2e2"}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
         >
-            {isDeleting ? "Menghapus..." : "Hapus"}
+            {isDeleting ? "🗑 Menghapus..." : "🗑"}
         </button>
     )
 }
