@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    // 1. Ubah inisialisasi state menjadi null karena ini menampung objek data
     const [profile, setProfile] = useState<any>(null);
     
     useEffect(() => {
@@ -41,19 +40,23 @@ const Navbar = () => {
             width: "250px", 
             borderRight: "1px solid #ccc", 
             padding: "20px",
-            height: "100vh", // Buat tinggi navbar full layar
+            height: "100vh", 
             display: "flex", 
-            flexDirection: "column", // Susun elemen dari atas ke bawah
+            flexDirection: "column", 
             boxSizing: "border-box" ,
             position: "fixed"
         }}>
             <h2>GoDev</h2>
             
-            {/* flex: 1 akan mendorong elemen di bawahnya (Profile & Logout) ke dasar layar */}
             <ul style={{ listStyle: "none", padding: 0, lineHeight: "2.5", flex: 1 }}>
                 <li style={{ fontWeight: "bold" }}>
                     <Link to="/dashboard" style={{ textDecoration: "none", color: "inherit" }}>
                         Home
+                    </Link>
+                </li>
+                <li style={{ fontWeight: "bold" }}>
+                    <Link to="/explore" style={{ textDecoration: "none", color: "inherit" }}>
+                        Explore
                     </Link>
                 </li>
                 <li style={{ fontWeight: "bold" }}>
@@ -69,10 +72,8 @@ const Navbar = () => {
                 <li>Analytics</li>
             </ul>
 
-            {/* AREA BAWAH: Profil User & Logout */}
             <div style={{ borderTop: "1px solid #eee", paddingTop: "20px" }}>
                 
-                {/* Tampilkan kotak profil jika data sudah berhasil di-fetch */}
                 {profile && (
                     <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
                         <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", cursor: "pointer" }}>
