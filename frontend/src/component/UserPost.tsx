@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PostActions from "./postComponent";
+import ProjectActions from "./ProjectComponent";
 
 interface UserPostsProps {
     userId: string;
@@ -165,7 +166,8 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                     </div>
                                 </div>
                             </div>
-                            <div style={{cursor:"pointer"}} onClick={() => navigate(`/post/${item.id}`)} >
+                            <div style={{cursor:"pointer"}} onClick={() => {const path = activeTab === "posts" ? "post" : "project";
+                                navigate(`/${path}/${item.id}`);}} >
 
                             <h1>{item.title}</h1>
                             <p
@@ -173,20 +175,73 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
                                 {item.body  || item.description} 
                             </p>
                             </div>
-                                <PostActions 
+                                <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginTop: "12px",
+                                    paddingTop: "10px",
+                                    borderTop: "1px solid #eee"
+                                }}
+                            >
+                            {activeTab === "projects" ? ( 
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px"
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            width: "10px",
+                                            height: "10px",
+                                            borderRadius: "50%",
+                                            backgroundColor: "#3776AB"
+                                        }}
+                                    />
+
+                                    <span
+                                        style={{
+                                            fontSize: "13px",
+                                            fontWeight: "500"
+                                        }}
+                                    >
+                                        {item.tags?.[0]?.tag?.name ?? "Unknown"}
+                                    </span>
+                                </div>
+                                ):(
+                                    <div/>
+                                )}
+                                {activeTab === "posts" ? (
+                                   <PostActions 
                                 postId={item.id}
                                 initialLikes={item.likeCount || 0}
                                 commentCount={item.commentCount || 0}
                                 initialIsLiked={item.isLikedByMe || false} 
                                 initialIsSaved={item.isSavedByMe || false}
                                 onCommentClick={() => navigate(`/post/${item.id}`)} 
+                                /> 
+                                ) : activeTab === "projects" ? (
+                                    <ProjectActions
+                                projectId={item.id}
+                                initialLikes={item.likeCount || 0}
+                                commentCount={item.commentCount || 0}
+                                initialIsLiked={item.isLikedByMe || false} 
+                                initialIsSaved={item.isSavedByMe || false}
+                                onCommentClick={() => navigate(`/post/${item.id}`)}
                                 />
+                               ) : null} 
+                                </div>
                         </div>
                     );
                 })
             )}
+
         </div>
-    )
+    );
+
 }
 
 export default UserPost;
