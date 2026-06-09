@@ -53,7 +53,7 @@ const Login = () => {
     {/* Logo */}
     <div style={{ textAlign: "center" }}>
       <img
-        src="/logo.png"
+        src={"/assets/logo.png"}
         alt="GoDev"
         style={{
           width: "90px",

@@ -48,15 +48,21 @@ const Register = () =>{
       alignItems: "center",
       justifyContent: "center",
       fontFamily: "Arial, sans-serif",
+      padding: "40px 20px",
     }}
   >
     {/* Logo */}
-    <div style={{ textAlign: "center" }}>
+    <div
+      style={{
+        textAlign: "center",
+        marginBottom: "20px",
+      }}
+    >
       <img
-        src="/logo.png"
+        src={"/assets/logo.png"}
         alt="GoDev"
         style={{
-          width: "90px",
+          width: "100px",
           marginBottom: "15px",
         }}
       />
@@ -64,9 +70,9 @@ const Register = () =>{
       <h1
         style={{
           color: "#2616d9",
-          fontSize: "56px",
+          fontSize: "64px",
           fontWeight: "800",
-          marginBottom: "10px",
+          margin: "0",
         }}
       >
         GoDev
@@ -74,10 +80,10 @@ const Register = () =>{
 
       <p
         style={{
-          fontSize: "16px",
+          fontSize: "18px",
           fontWeight: "700",
-          lineHeight: "1.1",
-          marginBottom: "25px",
+          lineHeight: "1.3",
+          marginTop: "20px",
         }}
       >
         Fill in the credentials below to make your
@@ -90,7 +96,8 @@ const Register = () =>{
       <p
         style={{
           color: "red",
-          marginBottom: "15px",
+          marginBottom: "20px",
+          fontWeight: "bold",
         }}
       >
         {errorMessage}
@@ -103,25 +110,25 @@ const Register = () =>{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "25px",
+        gap: "30px",
       }}
     >
       {/* CARD 1 */}
       <div
         style={{
-          width: "360px",
+          width: "450px",
           backgroundColor: "#dde2e8",
-          padding: "18px",
-          borderRadius: "18px",
-          boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
+          padding: "24px",
+          borderRadius: "20px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
         <label
           style={{
             display: "block",
             fontWeight: "700",
-            fontSize: "16px",
-            marginBottom: "8px",
+            fontSize: "18px",
+            marginBottom: "10px",
           }}
         >
           Enter your desired username.
@@ -135,12 +142,15 @@ const Register = () =>{
           required
           style={{
             width: "100%",
-            height: "34px",
-            borderRadius: "20px",
+            boxSizing: "border-box",
+            height: "46px",
+            borderRadius: "25px",
             border: "none",
+            outline: "none",
             backgroundColor: "#d1d1d1",
-            padding: "0 15px",
-            marginBottom: "15px",
+            padding: "0 18px",
+            fontSize: "15px",
+            marginBottom: "25px",
           }}
         />
 
@@ -148,8 +158,8 @@ const Register = () =>{
           style={{
             display: "block",
             fontWeight: "700",
-            fontSize: "16px",
-            marginBottom: "8px",
+            fontSize: "18px",
+            marginBottom: "10px",
           }}
         >
           Make a strong password!
@@ -163,11 +173,14 @@ const Register = () =>{
           required
           style={{
             width: "100%",
-            height: "34px",
-            borderRadius: "20px",
+            boxSizing: "border-box",
+            height: "46px",
+            borderRadius: "25px",
             border: "none",
+            outline: "none",
             backgroundColor: "#d1d1d1",
-            padding: "0 15px",
+            padding: "0 18px",
+            fontSize: "15px",
           }}
         />
       </div>
@@ -175,19 +188,19 @@ const Register = () =>{
       {/* CARD 2 */}
       <div
         style={{
-          width: "360px",
+          width: "450px",
           backgroundColor: "#dde2e8",
-          padding: "18px",
-          borderRadius: "18px",
-          boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
+          padding: "24px",
+          borderRadius: "20px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
         <label
           style={{
             display: "block",
             fontWeight: "700",
-            fontSize: "16px",
-            marginBottom: "8px",
+            fontSize: "18px",
+            marginBottom: "10px",
           }}
         >
           Enter your Email address.
@@ -201,12 +214,15 @@ const Register = () =>{
           required
           style={{
             width: "100%",
-            height: "34px",
-            borderRadius: "20px",
+            boxSizing: "border-box",
+            height: "46px",
+            borderRadius: "25px",
             border: "none",
+            outline: "none",
             backgroundColor: "#d1d1d1",
-            padding: "0 15px",
-            marginBottom: "15px",
+            padding: "0 18px",
+            fontSize: "15px",
+            marginBottom: "25px",
           }}
         />
 
@@ -214,8 +230,8 @@ const Register = () =>{
           style={{
             display: "block",
             fontWeight: "700",
-            fontSize: "16px",
-            marginBottom: "8px",
+            fontSize: "18px",
+            marginBottom: "10px",
           }}
         >
           Enter your display name.
@@ -228,11 +244,14 @@ const Register = () =>{
           placeholder="Your public profile name"
           style={{
             width: "100%",
-            height: "34px",
-            borderRadius: "20px",
+            boxSizing: "border-box",
+            height: "46px",
+            borderRadius: "25px",
             border: "none",
+            outline: "none",
             backgroundColor: "#d1d1d1",
-            padding: "0 15px",
+            padding: "0 18px",
+            fontSize: "15px",
           }}
         />
       </div>
@@ -240,22 +259,28 @@ const Register = () =>{
       <button
         type="submit"
         style={{
+          width: "180px",
+          height: "60px",
           backgroundColor: "black",
           color: "white",
           border: "none",
-          borderRadius: "30px",
-          padding: "12px 28px",
-          fontSize: "18px",
+          borderRadius: "35px",
+          fontSize: "22px",
           fontWeight: "700",
           cursor: "pointer",
-          marginTop: "10px",
+          marginTop: "5px",
         }}
       >
         Sign Up
       </button>
     </form>
 
-    <p style={{ marginTop: "20px" }}>
+    <p
+      style={{
+        marginTop: "25px",
+        fontSize: "16px",
+      }}
+    >
       Sudah punya akun?{" "}
       <Link to="/login">Masuk ke sini</Link>
     </p>
