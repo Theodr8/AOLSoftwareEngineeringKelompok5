@@ -138,7 +138,7 @@ export const viewLikeProjects = async (req: AuthRequest, res:Response): Promise 
 
     const formattedProjects = projects.map((post) => ({
       ...post,
-      likeCounts: post._count.likes,
+      likeCount: post._count.likes,
       saveCount: post._count.saves,
       commentCount: post._count.comments,
       isLikedByMe: post.likes.length > 0,
