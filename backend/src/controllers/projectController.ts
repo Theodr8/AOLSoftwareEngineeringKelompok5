@@ -31,10 +31,29 @@ export const viewUserAllProjects = async (req: AuthRequest, res:Response): Promi
             saves: true,
             comments: true,
           }
-        }
+        },
+        likes: { where: { userId: currentUserId } },
+        saves: { where: { userId: currentUserId } },
+        comments: { where: { authorId: currentUserId }, take: 1 }
       }
-    })
-    res.json(viewProjects);
+    });
+    const formattedPosts = viewProjects.map((project) => ({
+      ...project,
+      likeCount: project._count.likes,
+      saveCount: project._count.saves,
+      commentCount: project._count.comments,
+      
+      // Jika array likes/saves/comments ada isinya (length > 0), berarti SAYA pernah melakukannya (true)
+      isLikedByMe: project.likes.length > 0,
+      isSavedByMe: project.saves.length > 0,
+      isCommentedByMe: project.comments.length > 0,
+
+      likes: undefined,
+      saves: undefined,
+      comments: undefined,
+      _count: undefined
+    }));
+    res.json(formattedPosts);
   }
   catch (error: any){
     res.status(500).json({error: error.message});
@@ -161,10 +180,10 @@ export const createProject = async(req: AuthRequest, res: Response): Promise<any
 
 export const saveProject = async (req: AuthRequest, res:Response): Promise<any> =>{
   try{
-    const currentUserId = req.params.userId;
+    const currentUserId = req.user.userId;
     const {projectId} = req.params;
 
-    const alreadySave = await prisma.projectSave.findUnique({
+    const alreadySave = await prisma.ProjectSave.findUnique({
       where: {
         userId_projectId:{
           userId: currentUserId,
@@ -174,7 +193,7 @@ export const saveProject = async (req: AuthRequest, res:Response): Promise<any> 
     });
     //cek kalo udah disave
     if (alreadySave) {
-      await prisma.projectSave.deleteMany({
+      await prisma.ProjectSave.deleteMany({
         where:{
           userId: currentUserId,
           projectId: projectId
@@ -185,7 +204,7 @@ export const saveProject = async (req: AuthRequest, res:Response): Promise<any> 
 
     else {
 
-      await prisma.projectSave.create({
+      await prisma.ProjectSave.create({
         data: {
           userId: currentUserId,
           projectId: projectId,
@@ -202,7 +221,7 @@ export const saveProject = async (req: AuthRequest, res:Response): Promise<any> 
 export const viewSaveProjects = async (req: AuthRequest, res:Response): Promise<any> => {
   try{
     const currentUserId = req.user.userId;
-    const saveProjects = await prisma.projectSave.findMany({
+    const saveProjects = await prisma.ProjectSave.findMany({
       where: {
         userId : currentUserId
       },
@@ -240,6 +259,7 @@ export const viewProject = async(req: AuthRequest, res: Response): Promise<any> 
                         id: true,
                         username: true,
                         displayName: true,
+                        avatarUrl: true
                     }
                 },
                 tags: {

@@ -334,12 +334,12 @@ const Project = () =>{
                             <div style={{   height: "40px",
                                 width: "40px",
                                 borderBottom: "1px solid #eee" }}>
-                <button 
+                {/* <button 
                     onClick={() => setIsModalOpen(true)}
                     style={{ padding: "15px 14px", borderRadius: "30px", border: "1px solid #ccc", backgroundColor: "white", color: "gray", cursor: "pointer", width: "100%", textAlign: "left" }}
                 >
                     ╋
-                </button>
+                </button> */}
                 <CreateProject
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
