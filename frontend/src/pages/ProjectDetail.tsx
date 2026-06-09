@@ -57,6 +57,16 @@ const ProjectDetail = () => {
         setProject(prevProjects => prevProjects.filter(proj => proj.id !== deletedProjId));
     };
 
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     return (
 <div style={{ display: "flex", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
             <Navbar />
@@ -89,7 +99,7 @@ const ProjectDetail = () => {
                     }                 
                     style={{ cursor:"pointer", display: "flex", alignItems: "center", marginBottom: "20px" }}>
                         <img 
-                            src={project.author?.avatarUrl ? `http://localhost:5000${project.author.avatarUrl}` : "https://via.placeholder.com/50"} 
+                            src={getImageUrl(project.author.avatarUrl)} 
                             alt="avatar" 
                             style={{ width: "50px", height: "50px", borderRadius: "50%", marginRight: "15px", objectFit: "cover" }} 
                         />

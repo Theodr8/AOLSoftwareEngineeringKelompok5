@@ -98,6 +98,16 @@ const Project = () =>{
               )
           );
 
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     return(
     <div style={{ display: "flex",maxWidth: "1200px", margin: "0 auto", height: "100vh" }}>
         <div>
@@ -216,10 +226,8 @@ const Project = () =>{
             >
                 <img
                     src={
-                        project.author?.avatarUrl 
-                        ? `http://localhost:5000${project.author?.avatarUrl}` :
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXIdvC1Q4WL7_zA6cJm3yileyBT2OsWhBb9Q&s"
-                    }
+                        getImageUrl(project.author.avatarUrl)
+                        }
                     alt="avatar"
                     style={{
                         width: "40px",

@@ -10,8 +10,8 @@ const router = Router();
 // static route
 router.get('/foryou',requireAuth, viewProject);
 router.get('/following',requireAuth, getFollowingProjects);
-router.get('/likedproject', requireAuth, viewLikeProjects);
-router.get('/saveproject',requireAuth, viewSaveProjects);
+router.get('/likedproject/:userId', requireAuth, viewLikeProjects);
+router.get('/saveproject/:userId',requireAuth, viewSaveProjects);
 router.post('/',requireAuth, createProject);
 router.post("/:projectId/tag", requireAuth, addProjectTag);
 

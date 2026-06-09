@@ -58,18 +58,29 @@ const ProjectComment: React.FC<ProjectCommentProps> = ({projectId}) => {
 
             });
             if (!response.ok) throw new Error("gagal mengirim komentar")
-            
-            const newComment = await response.json();
-
-            setComments((prev) => [...prev, newComment]);
-            setInputText("");
-        }
-        catch(error){
-            alert("gagal mengirim komentar")
-        }
-    };
+                
+                const newComment = await response.json();
+                console.log("1. BENTUK DATA GET (Yang lama):", comments[0]);
+                console.log("2. BENTUK DATA POST (Yang baru):", newComment);
+                setComments((prev) => [...prev, newComment]);
+                setInputText("");
+            }
+            catch(error){
+                alert("gagal mengirim komentar")
+            }
+        };
 
     if (loading) return <div style={{ fontSize: "12px", color: "gray", padding: "10px 0" }}>Memuat komentar...</div>;
+
+        const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
 
     return (
         <div style={{ marginTop: "15px", paddingTop: "15px", borderTop: "1px dashed #eee" }}>
@@ -82,7 +93,7 @@ const ProjectComment: React.FC<ProjectCommentProps> = ({projectId}) => {
                     comments.map((comment) => (
                         <div key={comment.id} style={{ display: "flex", gap: "10px" }}>
                             <img 
-                                src={comment.author?.avatarUrl ? `http://localhost:5000${comment.author.avatarUrl}` : "https://via.placeholder.com/30"} 
+                                src={getImageUrl(comment.author.avatarUrl)} 
                                 alt="avatar" 
                                 style={{ width: "25px", height: "25px", borderRadius: "50%", objectFit: "cover" }} 
                             />
