@@ -70,6 +70,16 @@ const PostComment: React.FC<PostCommentProps> = ({postId}) => {
 
     if (loading) return <div style={{ fontSize: "12px", color: "gray", padding: "10px 0" }}>Memuat komentar...</div>;
 
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     return (
         <div style={{ marginTop: "15px", paddingTop: "15px", borderTop: "1px dashed #eee" }}>
             
@@ -81,7 +91,7 @@ const PostComment: React.FC<PostCommentProps> = ({postId}) => {
                     comments.map((comment) => (
                         <div key={comment.id} style={{ display: "flex", gap: "10px" }}>
                             <img 
-                                src={comment.author?.avatarUrl ? `http://localhost:5000${comment.author.avatarUrl}` : "https://via.placeholder.com/30"} 
+                                src={getImageUrl(comment.author.avatarUrl)} 
                                 alt="avatar" 
                                 style={{ width: "25px", height: "25px", borderRadius: "50%", objectFit: "cover" }} 
                             />

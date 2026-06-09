@@ -83,6 +83,16 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
         fetchPost();
     }, [userId, activeTab, activeDropdown, navigate]);
 
+    const getImageUrl = (url: string | null | undefined) => {
+        if (!url) return "https://via.placeholder.com/40"; 
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+
+        return `http://localhost:5000${url}`;
+    };
+
     const isShowingProjects = activeTab === "projects" || ((activeTab === "liked" || activeTab === "saved") && activeDropdown === "projects");
     const displayData = isShowingProjects ? projects : posts;
 
@@ -125,36 +135,48 @@ const UserPost: React.FC<UserPostsProps> = ({ userId, displayName, avatarUrl }) 
         </div>
     )}
 
-    {displayData.length === 0 ? (
-        <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Belum ada {isShowingProjects ? "project" : "postingan"}.</p>
-    ) : (
-        displayData.map(item => {
-            const postAuthorName = item.author?.displayName || displayName;
-            
-            const postAvatarUrl = item.author?.avatarUrl 
-                ? `http://localhost:5000${item.author?.avatarUrl}`
-                : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
+            {displayData.length === 0 ? (
+                <p style={{ color: "gray", textAlign: "center", padding: "20px 0" }}>Belum ada {isShowingProjects ? "project" : "postingan"}.</p>
+            ) : (
+                displayData.map(item => {
+                    const postAuthorName = item.author?.displayName || displayName;
+                    
+                    // const postAvatarUrl = item.author?.avatarUrl 
+                    //     ? `http://localhost:5000${item.author?.avatarUrl}`
+                    //     : (avatarUrl ? `http://localhost:5000${avatarUrl}` : "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg");
 
-            return (
-                <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
-                    <div 
-                        onClick={() => {
-                            if (item.author?.id && item.author.id !== myId) {
-                                navigate(`/user/${item.author.id}`);
-                            } else {
-                                navigate(`/profile`)
-                            }
-                        }}
-                        style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                            
-                        <img 
-                            src={postAvatarUrl} 
-                            alt="avatar" 
-                            style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
-                        />
-                        <div style={{flex:1}}>
-                            <div style={{ fontWeight: "bold", fontSize: "14px" }}>
-                                {postAuthorName}
+                    return (
+                        <div key={item.id} style={{ border: "1px solid #eee", borderRadius: "8px", padding: "15px", marginBottom: "15px" }}>
+                            <div 
+                                onClick={() => {
+                                    if (item.author?.id && item.author.id !== myId) {
+                                        navigate(`/user/${item.author.id}`);
+                                    }
+                                    else {
+                                        navigate(`/profile`)
+                                    }
+                                }}
+                                style={{cursor:"pointer",  display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                                    
+                                
+                                <img 
+                                    src={getImageUrl(item.author.avatarUrl)} 
+                                    alt="avatar" 
+                                    style={{ width: "35px", height: "35px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }} 
+                                />
+                                <div style={{flex:1}}>
+                                    <div style={{ fontWeight: "bold", fontSize: "14px" }}>
+                                        {postAuthorName}
+                                    </div>
+                                    
+                                    {item.author?.username && (
+                                        <div style={{ color: "gray", fontSize: "11px" }}>@{item.author.username}</div>
+                                    )}
+
+                                    <div style={{ color: "gray", fontSize: "12px" }}>
+                                        {new Date(item.createdAt).toLocaleDateString()}
+                                    </div>
+                                </div>
                             </div>
                             
                             {item.author?.username && (
