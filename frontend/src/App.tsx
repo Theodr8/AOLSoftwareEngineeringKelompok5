@@ -10,6 +10,7 @@ import UserDetail from './component/UserDetail.tsx';
 import PostDetail from './pages/PostDetail.tsx';
 import FollowersList from './pages/FollowList.tsx';
 import FollowingList from './pages/FollowingList.tsx';
+import ChatPage from './pages/ChatPage.tsx';
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
         <Route path="/followerlist/:userId" element={<FollowersList />} />
         <Route path="/followinglist/:userId" element={<FollowingList />} />
 
+
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:targetUserId" element={<ChatPage />} />
       </Routes>
     </BrowserRouter>
   );

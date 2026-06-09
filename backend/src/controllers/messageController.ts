@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/requireAuth";
 import prisma  from "../lib/prisma"
+import { useImperativeHandle } from "react";
 
 export const getChatHistory = async (req: AuthRequest, res: Response): Promise <any> => {
     try {
@@ -91,4 +92,81 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<any>
         catch(error: any){
             res.status(500).json({error: error.message})
         }
+}
+
+export const getChatContacts = async (req: AuthRequest, res:Response): Promise<any> =>{
+    try{
+        const myId = req.user.userId;
+
+        const conversations = await prisma.conversation.findMany({
+            where : {participants : {some : {userId: myId}}},
+            include : {
+                participants : {
+                    where : {userId: {not: myId}},
+                    include: {
+                        user: {
+                            select: {
+                                id:true,
+                                displayName: true,
+                                username: true,
+                                avatarUrl: true
+                            }
+                        }
+                    }
+                },
+                    messages:{
+                        orderBy: {createdAt: "desc"},
+                        take: 1
+                    }
+            }
+        });
+
+        const following = await prisma.follow.findMany({
+            where : {followerId: myId},
+            include: {
+                following:{
+                    select:{
+                        id:true,
+                        displayName: true,
+                        username: true,
+                        avatarUrl: true
+                    }
+                }
+            }
+        });
+
+        const contactMaps = new Map();
+
+        following.forEach(f => {
+            contactMaps.set(f.following.id, {
+                userId: f.following.id,
+                displayName: f.following.displayName,
+                username: f.following.username,
+                avatarUrl: f.following.avatarUrl,
+                lastMessage: null,
+                updatedAt: new Date(0)
+            });
+        });
+
+        conversations.forEach(conv => {
+            const friend = conv.participants[0]?.user;
+            const lastMsg = conv.messages[0];
+            if (friend) {
+                contactMaps.set(friend.id, {
+                    userId: friend.id,
+                    displayName: friend.displayName,
+                    username: friend.username,
+                    avatarUrl: friend.avatarUrl,
+                    lastMessage: lastMsg ? lastMsg.body : null,
+                    updatedAt: conv.updatedAt
+                });
+            }
+        });
+        const contactList = Array.from(contactMaps.values()).sort((a,b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+    
+        res.json(contactList);
+    }
+    catch(error: any){
+        res.status(500).json({error: error.message})
+    }
 }

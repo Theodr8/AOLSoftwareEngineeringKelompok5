@@ -86,10 +86,12 @@ const UserDetail= () =>{
                         <div>
 
                         <span>
-                        <ChatRoom 
+                        {/* <ChatRoom 
                         targetUserId={userProfile.id}
                         targetUserName={userProfile.displayName}
-                        />
+                        /> */}
+ 
+                        <button style ={{borderRadius: "39px", color:"white", height:"40px", width:"45px",margin:"10px", cursor:"pointer" }}onClick={() => navigate(`/chat/${userProfile.id}`)}>🗨️</button>
 
                         <Follow 
                         userId= {userProfile.id}
